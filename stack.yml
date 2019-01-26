@@ -1,2 +1,8 @@
-language: golang-middleware
-fprocess: ./handler
+provider:
+  name: faas
+  gateway: http://127.0.0.1:8081
+
+functions:
+  handler:
+    lang: golang-middleware
+    handler: ./handler
