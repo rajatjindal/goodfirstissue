@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"handler/function"
+	"goodfirstissue/function"
 )
 
 func main() {

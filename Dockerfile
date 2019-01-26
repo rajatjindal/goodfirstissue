@@ -6,15 +6,15 @@ RUN apk --no-cache add curl \
     && chmod +x /usr/bin/fwatchdog \
     && apk del curl --no-cache
 
-RUN mkdir -p /go/src/handler
-WORKDIR /go/src/handler
+RUN mkdir -p /go/src/goodfirstissue
+WORKDIR /go/src/goodfirstissue
 COPY . .
 
 # Run a gofmt and exclude all vendored code.
 RUN test -z "$(gofmt -l $(find . -type f -name '*.go' -not -path "./vendor/*" -not -path "./function/vendor/*"))" || { echo "Run \"gofmt -s -w\" on your Golang code"; exit 1; }
 
 RUN CGO_ENABLED=0 GOOS=linux \
-    go build --ldflags "-s -w" -a -installsuffix cgo -o handler . && \
+    go build --ldflags "-s -w" -a -installsuffix cgo -o goodfirstissue . && \
     go test $(go list ./... | grep -v /vendor/) -cover
 
 FROM alpine:3.8
@@ -26,12 +26,12 @@ RUN apk --no-cache add ca-certificates \
 
 WORKDIR /home/app
 
-COPY --from=build /go/src/handler/handler    .
+COPY --from=build /go/src/goodfirstissue/goodfirstissue    .
 COPY --from=build /usr/bin/fwatchdog         .
 
 USER app
 
-ENV fprocess="./handler"
+ENV fprocess="./goodfirstissue"
 ENV mode="http"
 ENV upstream_url="http://127.0.0.1:8081"
 
