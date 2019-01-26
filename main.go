@@ -6,8 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/rajatjindal/good-first-issue/function"
-	//"github.com/openfaas-incubator/golang-http-template/template/golang-middleware/function"
+	"github.com/rajatjindal/goodfirstissue/function"
 )
 
 func main() {
