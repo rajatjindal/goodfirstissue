@@ -3,6 +3,6 @@ provider:
   gateway: http://127.0.0.1:8081
 
 functions:
-  handler:
+  goodfirstissue:
     lang: golang-middleware
     handler: ./handler
