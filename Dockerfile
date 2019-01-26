@@ -27,12 +27,12 @@ RUN apk --no-cache add ca-certificates \
 WORKDIR /home/app
 
 COPY --from=build /go/src/goodfirstissue/goodfirstissue    .
-COPY --from=build /usr/bin/fwatchdog         .
+COPY --from=build /usr/bin/fwatchdog                       .
 
 USER app
 
 ENV fprocess="./goodfirstissue"
 ENV mode="http"
-ENV upstream_url="http://127.0.0.1:8081"
+ENV upstream_url="http://127.0.0.1:8080"
 
 CMD ["./fwatchdog"]
