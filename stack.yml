@@ -5,4 +5,4 @@ provider:
 functions:
   goodfirstissue:
     lang: golang-middleware
-    handler: ./handler
+    handler: ./goodfirstissue
