@@ -4,5 +4,6 @@ provider:
 
 functions:
   goodfirstissue:
-    lang: go
+    lang: golang-middleware
     handler: ./goodfirstissue
+    image: goodfirstissue:0.1
