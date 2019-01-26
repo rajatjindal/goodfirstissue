@@ -61,6 +61,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if msg == "" {
+		//comment
 		msg = "OK"
 	}
 	w.WriteHeader(http.StatusOK)
