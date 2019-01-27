@@ -2,6 +2,38 @@
 
 
 [[projects]]
+  digest = "1:166438587ed45ac211dab8a3ecebf4fa0c186d0db63430fb9127bbc2e5fcdc67"
+  name = "github.com/cenkalti/backoff"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "1e4cf3da559842a91afcb6ea6141451e6c30c618"
+  version = "v2.1.1"
+
+[[projects]]
+  branch = "master"
+  digest = "1:dbafc2ff5b1aaf1a66cda9fe7801c0c87535e513700ef62de968d22a99defa12"
+  name = "github.com/dghubble/go-twitter"
+  packages = ["twitter"]
+  pruneopts = "UT"
+  revision = "7fd79e2bcc65f2e35ee1ada816481ab3e0c64d2a"
+
+[[projects]]
+  digest = "1:f3cacf5fd0e718de3f43af615e84372b318f61889140f6854f98b05894001d99"
+  name = "github.com/dghubble/oauth1"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "f0fe2bff8fbf301b33359ca431e4afc90390aab0"
+  version = "v0.5.0"
+
+[[projects]]
+  digest = "1:fba61d8584058169c5bd4625196f33077ba937f7131625d4440686c5e4cff380"
+  name = "github.com/dghubble/sling"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "e2624bf29a7de45ab0802b09aea94ca0a7815c5f"
+  version = "v1.2.0"
+
+[[projects]]
   digest = "1:7a69bac90389f73502cf0591db45b0ec8b68d012e352f709e14d4e16e3c94ce3"
   name = "github.com/google/go-github"
   packages = ["github"]
@@ -52,12 +84,23 @@
   pruneopts = "UT"
   revision = "b90733256f2e882e81d52f9126de08df5615afd9"
 
+[[projects]]
+  digest = "1:4d2e5a73dc1500038e504a8d78b986630e3626dc027bc030ba5c75da257cdb96"
+  name = "gopkg.in/yaml.v2"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "51d6538a90f86fe93ac480b35f37b2be17fef232"
+  version = "v2.2.2"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/dghubble/go-twitter/twitter",
+    "github.com/dghubble/oauth1",
     "github.com/google/go-github/github",
     "github.com/sirupsen/logrus",
+    "gopkg.in/yaml.v2",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

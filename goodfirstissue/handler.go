@@ -6,22 +6,40 @@ import (
 	"net/http"
 	"strings"
 
+	"handler/function/twitter"
+
 	"github.com/google/go-github/github"
 	"github.com/sirupsen/logrus"
 )
 
+var (
+	twitterClient        *twitter.Client
+	twitterClientInitErr error
+)
+
+func init() {
+	twitterClient, twitterClientInitErr = twitter.NewClient()
+}
+
 //Handle handles the function call
 func Handle(w http.ResponseWriter, r *http.Request) {
+	if twitterClient == nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(fmt.Sprintf("twitter client not initialized. error: %s", twitterClientInitErr.Error())))
+		return
+	}
+
 	if r.Body == nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("request body cannot be empty"))
+		return
 	}
 
 	t := github.WebHookType(r)
 	if t == "" {
 		logrus.Error("header 'X-GitHub-Event' not found. cannot handle this request")
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("header 'X-GitHub-Event' not found"))
+		w.Write([]byte("header 'X-GitHub-Event' not found."))
 		return
 	}
 
@@ -57,6 +75,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 
 		if msg != "" {
 			msg += fmt.Sprintf(" for %s\n%s", *o.Repo.FullName, *o.Issue.HTMLURL)
+			twitterClient.Tweet(msg)
 		}
 	}
 
