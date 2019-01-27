@@ -74,7 +74,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if msg != "" {
-			msg += fmt.Sprintf(" for %s\n%s", *o.Repo.FullName, *o.Issue.HTMLURL)
+			msg += fmt.Sprintf(" for %s.\n#%s\n%s", *o.Repo.FullName, *o.Repo.Language, *o.Issue.HTMLURL)
 			twitterClient.Tweet(msg)
 		}
 	}
