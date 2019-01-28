@@ -47,7 +47,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logrus.Error("failed to read request body. error: ", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Internal Server Error"))
+		w.Write([]byte("failed to read request body."))
 		return
 	}
 	logrus.Tracef("%s", string(body))
@@ -56,7 +56,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logrus.Error("failed to parsepayload. error: ", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Internal Server Error"))
+		w.Write([]byte("failed to parse payload."))
 		return
 	}
 
