@@ -1,5 +1,7 @@
 package function
 
+// package main
+
 import (
 	"fmt"
 	"io/ioutil"
@@ -20,6 +22,13 @@ var (
 func init() {
 	twitterClient, twitterClientInitErr = twitter.NewClient()
 }
+
+// func main() {
+// 	http.HandleFunc("/", Handle)
+// 	if err := http.ListenAndServe(":8080", nil); err != nil {
+// 		panic(err)
+// 	}
+// }
 
 //Handle handles the function call
 func Handle(w http.ResponseWriter, r *http.Request) {
@@ -52,6 +61,17 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 	}
 	logrus.Tracef("%s", string(body))
 
+	//per https://developer.github.com/webhooks/#events integration_installation and integration_installation_repositories events are
+	// deprecated and replaced by installation and installation_repositories. But github is still sending integration_installation and
+	// integration_installation_repositories and go-github don't understand these.
+
+	switch t {
+	case "integration_installation":
+		t = "installation"
+	case "integration_installation_repositories":
+		t = "installation_repositories"
+	}
+
 	e, err := github.ParseWebHook(t, body)
 	if err != nil {
 		logrus.Error("failed to parsepayload. error: ", err.Error())
@@ -61,18 +81,29 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var msgs []string
-	if o, ok := e.(*github.IssuesEvent); ok {
+
+	switch o := e.(type) {
+	case *github.IssuesEvent:
 		msgs = handleIssuesEvent(o)
+	case *github.InstallationEvent:
+		msgs = handleInstallationEvent(o)
+	case *github.InstallationRepositoriesEvent:
+		msgs = handleInstallationRepositoriesEvent(o)
 	}
 
 	for _, msg := range msgs {
 		twitterClient.Tweet(msg)
 	}
+
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("OK"))
 }
 
 func handleIssuesEvent(o *github.IssuesEvent) []string {
+	if !goodFirstIssue(o.Issue.Labels) {
+		return nil
+	}
+
 	msg := ""
 	switch {
 	case *o.Action == "opened":
@@ -106,4 +137,41 @@ func goodFirstIssue(labels []github.Label) bool {
 	}
 
 	return false
+}
+
+func handleInstallationEvent(o *github.InstallationEvent) []string {
+	if stringValue(o.Action) != "created" {
+		return nil
+	}
+
+	msgs := []string{}
+
+	for _, r := range o.Repositories {
+		htmlURL := fmt.Sprintf("%s/%s", stringValue(o.Installation.Account.HTMLURL), stringValue(r.Name))
+		msgs = append(msgs, fmt.Sprintf("yay!! Lets welcome %s to #goodfirstissue", htmlURL))
+	}
+
+	return msgs
+}
+
+func handleInstallationRepositoriesEvent(o *github.InstallationRepositoriesEvent) []string {
+	if stringValue(o.Action) != "added" {
+		return nil
+	}
+
+	msgs := []string{}
+	for _, r := range o.RepositoriesAdded {
+		htmlURL := fmt.Sprintf("%s/%s", stringValue(o.Installation.Account.HTMLURL), stringValue(r.Name))
+		msgs = append(msgs, fmt.Sprintf("yay!! Lets welcome %s to #goodfirstissue", htmlURL))
+	}
+
+	return msgs
+}
+
+func stringValue(s *string) string {
+	if s == nil {
+		return ""
+	}
+
+	return *s
 }
