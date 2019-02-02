@@ -60,31 +60,36 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	msg := ""
-	if o, ok := e.(*github.IssuesEvent); ok && goodFirstIssue(o.Issue.Labels) {
-		switch {
-		case *o.Action == "opened":
-			msg = "a new #goodfirstissue opened"
-		case *o.Action == "reopened":
-			msg = "a #goodfirstissue got reopened"
-		case *o.Action == "labeled":
-			msg = "an issue just got labeled #goodfirstissue"
-		case *o.Action == "unassigned":
-			msg = "an issue just got available for assignment #goodfirstissue"
-		}
-
-		if msg != "" {
-			msg += fmt.Sprintf(" for %s.\n#%s\n%s", *o.Repo.FullName, *o.Repo.Language, *o.Issue.HTMLURL)
-			twitterClient.Tweet(msg)
-		}
+	var msgs []string
+	if o, ok := e.(*github.IssuesEvent); ok {
+		msgs = handleIssuesEvent(o)
 	}
 
-	if msg == "" {
-		//comment 1
-		msg = "OK"
+	for _, msg := range msgs {
+		twitterClient.Tweet(msg)
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(msg))
+	w.Write([]byte("OK"))
+}
+
+func handleIssuesEvent(o *github.IssuesEvent) []string {
+	msg := ""
+	switch {
+	case *o.Action == "opened":
+		msg = "a new #goodfirstissue opened"
+	case *o.Action == "reopened":
+		msg = "a #goodfirstissue got reopened"
+	case *o.Action == "labeled":
+		msg = "an issue just got labeled #goodfirstissue"
+	case *o.Action == "unassigned":
+		msg = "an issue just got available for assignment #goodfirstissue"
+	}
+
+	if msg != "" {
+		msg += fmt.Sprintf(" for %s.\n#%s\n%s", *o.Repo.FullName, *o.Repo.Language, *o.Issue.HTMLURL)
+	}
+
+	return []string{msg}
 }
 
 func goodFirstIssue(labels []github.Label) bool {
