@@ -62,25 +62,27 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 
 	msg := ""
 	if o, ok := e.(*github.IssuesEvent); ok && goodFirstIssue(o.Issue.Labels) {
-		switch {
-		case *o.Action == "opened":
+		switch stringValue(o.Action) {
+		case "opened":
 			msg = "a new #goodfirstissue opened"
-		case *o.Action == "reopened":
+		case "reopened":
 			msg = "a #goodfirstissue got reopened"
-		case *o.Action == "labeled":
+		case "labeled":
 			msg = "an issue just got labeled #goodfirstissue"
-		case *o.Action == "unassigned":
+		case "unassigned":
 			msg = "an issue just got available for assignment #goodfirstissue"
 		}
 
 		if msg != "" {
-			msg += fmt.Sprintf(" for %s.\n#%s\n%s", *o.Repo.FullName, *o.Repo.Language, *o.Issue.HTMLURL)
+			msg += fmt.Sprintf(" for %s.\n\n%s", stringValue(o.Repo.FullName), stringValue(o.Issue.HTMLURL))
+			if o.Repo.Language != nil {
+				msg += fmt.Sprintf("#%s", stringValue(o.Repo.Language))
+			}
 			twitterClient.Tweet(msg)
 		}
 	}
 
 	if msg == "" {
-		//comment 1
 		msg = "OK"
 	}
 	w.WriteHeader(http.StatusOK)
@@ -89,16 +91,24 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 
 func goodFirstIssue(labels []github.Label) bool {
 	for _, l := range labels {
-		if *l.Name == "good first issue" || *l.Name == "good-first-issue" {
+		if stringValue(l.Name) == "good first issue" || stringValue(l.Name) == "good-first-issue" {
 			return true
 		}
 
-		if strings.Contains(*l.Name, "good") &&
-			strings.Contains(*l.Name, "first") &&
-			strings.Contains(*l.Name, "issue") {
+		if strings.Contains(stringValue(l.Name), "good") &&
+			strings.Contains(stringValue(l.Name), "first") &&
+			strings.Contains(stringValue(l.Name), "issue") {
 			return true
 		}
 	}
 
 	return false
+}
+
+func stringValue(s *string) string {
+	if s == nil {
+		return ""
+	}
+
+	return *s
 }
