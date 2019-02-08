@@ -68,9 +68,13 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 		case "reopened":
 			msg = "a #goodfirstissue got reopened"
 		case "labeled":
-			msg = "an issue just got labeled #goodfirstissue"
+			if stringValue(o.Issue.State) == "open" {
+				msg = "an issue just got labeled #goodfirstissue"
+			}
 		case "unassigned":
-			msg = "an issue just got available for assignment #goodfirstissue"
+			if stringValue(o.Issue.State) == "open" {
+				msg = "an issue just got available for assignment #goodfirstissue"
+			}
 		}
 
 		if msg != "" {
