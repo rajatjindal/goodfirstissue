@@ -28,6 +28,25 @@ The github app needs `read` access to `issues` and `metadata` of the repository.
 
 ![Permissions](docs/permissions.png)
 
+# Current users
+
+Orgs/Users who have enabled `goodfirstissue` for all/selected repositories (in no particular order)
+
+| Org/User | Repository |
+| ------ | ------ |
+| [openfaas](https://github.com/openfaas) | All |
+| [helm](https://github.com/helm) | All |
+| [asyncapi](https://github.com/asyncapi)| All |
+| [asyncy](https://github.com/asyncy) | All |
+| [rajatjindal](https://github.com/rajatjindal) | All |
+| [reactiverse](https://github.com/reactiverse) | Selected |
+| [pmlopes](https://github.com/pmlopes) | Selected |
+| [google](https://github.com/google) | Selected |
+| [Ewocker](https://github.com/Ewocker) | Selected |
+| [jetstack](https://github.com/jetstack)| Selected |
+| [alexellis](https://github.com/alexellis)| Selected |
+
+
 # Acknowledgements
 
 Many thanks to [Alex Ellis](https://twitter.com/alexellisuk) for helping me write, build and deploy this openfaas-function to [openfaas-cloud](https://github.com/openfaas/openfaas-cloud).
