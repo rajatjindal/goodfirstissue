@@ -28,6 +28,24 @@ The github app needs `read` access to `issues` and `metadata` of the repository.
 
 ![Permissions](docs/permissions.png)
 
+# Current users
+
+Orgs/Users who have enabled `goodfirstissue` for all/selected repositories (generated using [github-app-installations](https://github.com/rajatjindal/github-app-installations))
+
+| Org/User | Repository |
+| ------ | ------ |
+| [helm](https://github.com/helm) | [All](https://github.com/helm) |
+| [openfaas](https://github.com/openfaas) | [All](https://github.com/openfaas) |
+| [asyncy](https://github.com/asyncy) | [All](https://github.com/asyncy) |
+| [asyncapi](https://github.com/asyncapi) | [All](https://github.com/asyncapi) |
+| [Ewocker](https://github.com/Ewocker) | [vue-lodash](https://github.com/Ewocker/vue-lodash) |
+| [pmlopes](https://github.com/pmlopes) | [vertx-starter](https://github.com/pmlopes/vertx-starter) |
+| [google](https://github.com/google) | [go-github](https://github.com/google/go-github) |
+| [rajatjindal](https://github.com/rajatjindal) | - [github-app-installations](https://github.com/rajatjindal/github-app-installations)<br/>- [goodfirstissue](https://github.com/rajatjindal/goodfirstissue) |
+| [alexellis](https://github.com/alexellis) | [ubiquitous-octo-guacamole](https://github.com/alexellis/ubiquitous-octo-guacamole) |
+| [reactiverse](https://github.com/reactiverse) | [es4x](https://github.com/reactiverse/es4x) |
+| [jetstack](https://github.com/jetstack) | [cert-manager](https://github.com/jetstack/cert-manager) |
+
 # Acknowledgements
 
 Many thanks to [Alex Ellis](https://twitter.com/alexellisuk) for helping me write, build and deploy this openfaas-function to [openfaas-cloud](https://github.com/openfaas/openfaas-cloud).
