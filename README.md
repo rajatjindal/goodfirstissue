@@ -19,7 +19,7 @@ The target audience (or followers) for this twitter account are users who are lo
 - Select the User/Org which owns the repo where you plan to install this app.
 - Confirm Password (required by `github`). App don't get access to this password.
 - Refer that only `read` access is required to `issues` and `metadata`.
-- From `Repository Access` box, select the repositories where you want to enable it. You can enable for `all` or `only selected` reposiotories.
+- From `Repository Access` box, select the repositories where you want to enable it. You can enable for `all` or `only selected` repositories.
 - Click Save and you are all set.
 
 # Permissions required
