@@ -10,6 +10,7 @@ import (
 
 	"github.com/google/go-github/github"
 	"github.com/sirupsen/logrus"
+	yaml "gopkg.in/yaml.v2"
 )
 
 var (
@@ -17,8 +18,23 @@ var (
 	twitterClientInitErr error
 )
 
+var twitterMap = map[string]string{}
+
 func init() {
 	twitterClient, twitterClientInitErr = twitter.NewClient()
+
+	f := "twitter-handle-map.yaml"
+	c, err := ioutil.ReadFile(f)
+	if err != nil {
+		logrus.Errorf(err.Error())
+		return
+	}
+
+	err = yaml.Unmarshal(c, &twitterMap)
+	if err != nil {
+		logrus.Errorf(err.Error())
+		return
+	}
 }
 
 //Handle handles the function call
@@ -82,6 +98,21 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 			if o.Repo.Language != nil {
 				msg += fmt.Sprintf("#%s", stringValue(o.Repo.Language))
 			}
+
+			//if we have entry for specific repo use that,
+			//else fallback to check if entry exist for owner of repo
+			tHandle := ""
+			ok := false
+			if tHandle, ok = twitterMap[stringValue(o.Repo.FullName)]; ok && tHandle != "" {
+				msg += fmt.Sprintf(" @%s", tHandle)
+			}
+
+			if tHandle == "" {
+				if tHandle, ok = twitterMap[stringValue(o.Repo.Owner.Login)]; ok && tHandle != "" {
+					msg += fmt.Sprintf(" @%s", tHandle)
+				}
+			}
+
 			twitterClient.Tweet(msg)
 		}
 	}
