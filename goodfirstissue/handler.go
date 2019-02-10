@@ -10,7 +10,6 @@ import (
 
 	"github.com/google/go-github/github"
 	"github.com/sirupsen/logrus"
-	yaml "gopkg.in/yaml.v2"
 )
 
 var (
@@ -22,19 +21,7 @@ var twitterMap = map[string]string{}
 
 func init() {
 	twitterClient, twitterClientInitErr = twitter.NewClient()
-
-	f := "twitter-handle-map.yaml"
-	c, err := ioutil.ReadFile(f)
-	if err != nil {
-		logrus.Errorf(err.Error())
-		return
-	}
-
-	err = yaml.Unmarshal(c, &twitterMap)
-	if err != nil {
-		logrus.Errorf(err.Error())
-		return
-	}
+	twitterMap = twitter.GetTwitterHandleMap()
 }
 
 //Handle handles the function call
