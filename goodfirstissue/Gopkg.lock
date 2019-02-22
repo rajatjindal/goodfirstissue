@@ -58,6 +58,14 @@
   version = "v1.0.1"
 
 [[projects]]
+  digest = "1:808cdddf087fb64baeae67b8dfaee2069034d9704923a3cb8bd96a995421a625"
+  name = "github.com/patrickmn/go-cache"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "a3647f8e31d79543b2d0f0ae2fe5c379d72cedc0"
+  version = "v2.1.0"
+
+[[projects]]
   digest = "1:87c2e02fb01c27060ccc5ba7c5a407cc91147726f8f40b70cceeedbc52b1f3a8"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
@@ -99,6 +107,7 @@
     "github.com/dghubble/go-twitter/twitter",
     "github.com/dghubble/oauth1",
     "github.com/google/go-github/github",
+    "github.com/patrickmn/go-cache",
     "github.com/sirupsen/logrus",
     "gopkg.in/yaml.v2",
   ]
