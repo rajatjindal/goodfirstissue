@@ -5,16 +5,26 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 
 	"handler/function/twitter"
 
 	"github.com/google/go-github/github"
+	gocache "github.com/patrickmn/go-cache"
 	"github.com/sirupsen/logrus"
 )
+
+// func main() {
+// 	http.HandleFunc("/", Handle)
+// 	http.ListenAndServe(":8081", nil)
+// }
+
+const cacheExpiration = 1 * time.Minute
 
 var (
 	twitterClient        *twitter.Client
 	twitterClientInitErr error
+	cache                = gocache.New(cacheExpiration, 2*time.Minute)
 )
 
 var twitterMap = map[string]string{}
@@ -65,6 +75,11 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 
 	msg := ""
 	if o, ok := e.(*github.IssuesEvent); ok && goodFirstIssue(o.Issue.Labels) {
+		if _, found := cache.Get(stringValue(o.Issue.HTMLURL)); found {
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("OK"))
+			return
+		}
 		switch stringValue(o.Action) {
 		case "opened":
 			msg = "a new #goodfirstissue opened"
@@ -100,6 +115,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
+			cache.Set(stringValue(o.Issue.HTMLURL), "tweeted", cacheExpiration)
 			twitterClient.Tweet(msg)
 		}
 	}
