@@ -34,17 +34,18 @@ Orgs/Users who have enabled `goodfirstissue` for all/selected repositories (gene
 
 | Org/User | Repository |
 | ------ | ------ |
+| [tektoncd](https://github.com/tektoncd) | [All](https://github.com/tektoncd) |
 | [helm](https://github.com/helm) | [All](https://github.com/helm) |
-| [openfaas](https://github.com/openfaas) | [All](https://github.com/openfaas) |
 | [asyncy](https://github.com/asyncy) | [All](https://github.com/asyncy) |
 | [asyncapi](https://github.com/asyncapi) | [All](https://github.com/asyncapi) |
-| [Ewocker](https://github.com/Ewocker) | [vue-lodash](https://github.com/Ewocker/vue-lodash) |
-| [pmlopes](https://github.com/pmlopes) | [vertx-starter](https://github.com/pmlopes/vertx-starter) |
+| [openfaas](https://github.com/openfaas) | [All](https://github.com/openfaas) |
 | [google](https://github.com/google) | [go-github](https://github.com/google/go-github) |
-| [rajatjindal](https://github.com/rajatjindal) | - [github-app-installations](https://github.com/rajatjindal/github-app-installations)<br/>- [goodfirstissue](https://github.com/rajatjindal/goodfirstissue) |
-| [alexellis](https://github.com/alexellis) | [ubiquitous-octo-guacamole](https://github.com/alexellis/ubiquitous-octo-guacamole) |
+| [pmlopes](https://github.com/pmlopes) | [vertx-starter](https://github.com/pmlopes/vertx-starter) |
+| [Ewocker](https://github.com/Ewocker) | [vue-lodash](https://github.com/Ewocker/vue-lodash) |
 | [reactiverse](https://github.com/reactiverse) | [es4x](https://github.com/reactiverse/es4x) |
 | [jetstack](https://github.com/jetstack) | [cert-manager](https://github.com/jetstack/cert-manager) |
+| [alexellis](https://github.com/alexellis) | - [derek](https://github.com/alexellis/derek)<br/>- [github-exporter](https://github.com/alexellis/github-exporter)<br/>- [inlets](https://github.com/alexellis/inlets)<br/>- [minikube-operator](https://github.com/alexellis/minikube-operator)<br/>- [ubiquitous-octo-guacamole](https://github.com/alexellis/ubiquitous-octo-guacamole) |
+| [rajatjindal](https://github.com/rajatjindal) | - [github-app-installations](https://github.com/rajatjindal/github-app-installations)<br/>- [goodfirstissue](https://github.com/rajatjindal/goodfirstissue) |
 
 
 # Acknowledgements
