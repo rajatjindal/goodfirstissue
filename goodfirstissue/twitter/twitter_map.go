@@ -5,6 +5,7 @@ var twitterMap = map[string]string{
 	"openfaas":                   "openfaas",
 	"helm":                       "HelmPack",
 	"asyncy":                     "asyncy",
+	"tektoncd":                   "tektoncd",
 }
 
 //GetTwitterHandleMap returns the twitter map
