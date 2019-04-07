@@ -7,5 +7,7 @@ functions:
     lang: golang-middleware
     handler: ./goodfirstissue
     image: goodfirstissue:0.1
+    labels:
+      com.openfaas.scale.zero: false
     secrets:
       - goodfirstissue
