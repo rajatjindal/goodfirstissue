@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"handler/function/slack"
 	"handler/function/twitter"
 
 	"github.com/google/go-github/github"
@@ -24,7 +25,11 @@ const cacheExpiration = 1 * time.Minute
 var (
 	twitterClient        *twitter.Client
 	twitterClientInitErr error
-	cache                = gocache.New(cacheExpiration, 2*time.Minute)
+
+	slackClient        *slack.Client
+	slackClientInitErr error
+
+	cache = gocache.New(cacheExpiration, 2*time.Minute)
 )
 
 var twitterMap = map[string]string{}
@@ -32,6 +37,10 @@ var twitterMap = map[string]string{}
 func init() {
 	twitterClient, twitterClientInitErr = twitter.NewClient()
 	twitterMap = twitter.GetTwitterHandleMap()
+	slackClient, slackClientInitErr = slack.NewClient()
+	if slackClientInitErr != nil {
+		logrus.Errorf("failed to init slack. err: %s", slackClientInitErr.Error())
+	}
 }
 
 //Handle handles the function call
@@ -95,6 +104,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
+		//send to twitter
 		if msg != "" {
 			msg += fmt.Sprintf(" for %s.\n\n%s", stringValue(o.Repo.FullName), stringValue(o.Issue.HTMLURL))
 			if o.Repo.Language != nil {
@@ -117,6 +127,19 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 
 			cache.Set(stringValue(o.Issue.HTMLURL), "tweeted", cacheExpiration)
 			twitterClient.Tweet(msg)
+		}
+
+		//send to slack
+		if slackClient != nil && msg != "" && !boolValue(o.Repo.Fork) {
+			channel := stringValue(o.Repo.Owner.Login) + "_" + stringValue(o.Repo.Name)
+			if len(channel) > 22 {
+				channel = channel[:22]
+			}
+
+			err := slackClient.SendMessage(strings.ToLower(channel), msg)
+			if err != nil {
+				logrus.Errorf("error sending to slack. err: %s", err.Error())
+			}
 		}
 	}
 
@@ -149,4 +172,12 @@ func stringValue(s *string) string {
 	}
 
 	return *s
+}
+
+func boolValue(b *bool) bool {
+	if b == nil {
+		return false
+	}
+
+	return *b
 }
