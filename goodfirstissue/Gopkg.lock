@@ -2,6 +2,14 @@
 
 
 [[projects]]
+  branch = "master"
+  digest = "1:b781c6ce2a81ea819878fe0e907182aa2d3e55629408a9fdbfdff62789f93614"
+  name = "github.com/bluele/slack"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "b4b4d354a079fbf4bd948faad01b32cecb2ffe03"
+
+[[projects]]
   digest = "1:166438587ed45ac211dab8a3ecebf4fa0c186d0db63430fb9127bbc2e5fcdc67"
   name = "github.com/cenkalti/backoff"
   packages = ["."]
@@ -104,6 +112,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/bluele/slack",
     "github.com/dghubble/go-twitter/twitter",
     "github.com/dghubble/oauth1",
     "github.com/google/go-github/github",
