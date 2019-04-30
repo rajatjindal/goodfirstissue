@@ -22,7 +22,7 @@ import (
 // }
 
 const (
-	credentialsFile = "/Users/rajatjindal/openfaas/secrets.yaml"
+	credentialsFile = "/var/openfaas/secrets/secrets.yaml"
 	cacheExpiration = 1 * time.Minute
 )
 
