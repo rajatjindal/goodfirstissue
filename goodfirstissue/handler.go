@@ -177,7 +177,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 
 		//send to slack
 		if slackClient != nil && msg != "" && !boolValue(o.Repo.Fork) {
-			channel := stringValue(o.Repo.Owner.Login) + "_" + stringValue(o.Repo.Name)
+			channel := stringValue(o.Repo.Name)
 			if len(channel) > 22 {
 				channel = channel[:22]
 			}
