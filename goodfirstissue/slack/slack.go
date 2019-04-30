@@ -1,14 +1,8 @@
 package slack
 
 import (
-	"io/ioutil"
-
 	"github.com/bluele/slack"
-	"github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
 )
-
-var credentialsFile = "/var/openfaas/secrets/slack.yaml"
 
 //Tokens is for slack tokens
 type Tokens struct {
@@ -21,20 +15,7 @@ type Client struct {
 }
 
 //NewClient returns new twitter client
-func NewClient() (*Client, error) {
-	r, err := ioutil.ReadFile(credentialsFile)
-	if err != nil {
-		logrus.Error("failed to read credentials", err.Error())
-		return nil, err
-	}
-
-	t := &Tokens{}
-	err = yaml.Unmarshal(r, t)
-	if err != nil {
-		logrus.Error("failed to unmarshal json", err.Error())
-		return nil, err
-	}
-
+func NewClient(t *Tokens) (*Client, error) {
 	return &Client{
 		slack: slack.New(t.Token),
 	}, nil

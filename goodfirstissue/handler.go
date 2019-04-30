@@ -13,6 +13,7 @@ import (
 	"github.com/google/go-github/github"
 	gocache "github.com/patrickmn/go-cache"
 	"github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v2"
 )
 
 // func main() {
@@ -20,9 +21,15 @@ import (
 // 	http.ListenAndServe(":8081", nil)
 // }
 
-const cacheExpiration = 1 * time.Minute
+const (
+	credentialsFile = "/Users/rajatjindal/openfaas/secrets.yaml"
+	cacheExpiration = 1 * time.Minute
+)
 
 var (
+	credentialsError error
+
+	twitterMap           map[string]string
 	twitterClient        *twitter.Client
 	twitterClientInitErr error
 
@@ -32,19 +39,58 @@ var (
 	cache = gocache.New(cacheExpiration, 2*time.Minute)
 )
 
-var twitterMap = map[string]string{}
+//Secrets are secrets for this function
+type Secrets struct {
+	TwitterTokens *twitter.Tokens `yaml:"twitter"`
+	SlackTokens   *slack.Tokens   `yaml:"slack"`
+}
 
-func init() {
-	twitterClient, twitterClientInitErr = twitter.NewClient()
+func initTwitter(s *Secrets) {
+	twitterClient, twitterClientInitErr = twitter.NewClient(s.TwitterTokens)
 	twitterMap = twitter.GetTwitterHandleMap()
-	slackClient, slackClientInitErr = slack.NewClient()
+}
+
+func initSlack(s *Secrets) {
+	slackClient, slackClientInitErr = slack.NewClient(s.SlackTokens)
 	if slackClientInitErr != nil {
 		logrus.Errorf("failed to init slack. err: %s", slackClientInitErr.Error())
 	}
 }
 
+func initCredentials() (*Secrets, error) {
+	r, err := ioutil.ReadFile(credentialsFile)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read credentials file with err: %s", err.Error())
+	}
+
+	t := &Secrets{}
+	err = yaml.Unmarshal(r, t)
+	if err != nil {
+		return nil, err
+	}
+
+	return t, nil
+}
+
+func init() {
+	var secrets *Secrets
+	secrets, credentialsError = initCredentials()
+	if credentialsError != nil {
+		return
+	}
+
+	initTwitter(secrets)
+	initSlack(secrets)
+}
+
 //Handle handles the function call
 func Handle(w http.ResponseWriter, r *http.Request) {
+	if credentialsError != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(fmt.Sprintf("failed to read credentials. error: %s", credentialsError.Error())))
+		return
+	}
+
 	if twitterClient == nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Sprintf("twitter client not initialized. error: %s", twitterClientInitErr.Error())))

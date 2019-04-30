@@ -11,4 +11,3 @@ functions:
       com.openfaas.scale.zero: false
     secrets:
       - goodfirstissue
-      - slack
