@@ -22,8 +22,11 @@ import (
 // }
 
 const (
-	credentialsFile = "/var/openfaas/secrets/secrets.yaml"
-	cacheExpiration = 1 * time.Minute
+	credentialsFile   = "/var/openfaas/secrets/secrets.yaml"
+	cacheExpiration   = 1 * time.Minute
+	maxTweetLength    = 280
+	dotsAtTheEnd      = "...."
+	newLinesCharCount = 5
 )
 
 var (
@@ -152,7 +155,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 
 		//send to twitter
 		if msg != "" {
-			msg += fmt.Sprintf(" for %s.\n\n%s", stringValue(o.Repo.FullName), stringValue(o.Issue.HTMLURL))
+			msg += fmt.Sprintf(" for %s", stringValue(o.Repo.FullName))
 			if o.Repo.Language != nil {
 				msg += fmt.Sprintf("#%s", stringValue(o.Repo.Language))
 			}
@@ -171,7 +174,21 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
+			msgLength := len(msg)
+			urlLength := len(o.Issue.GetHTMLURL())
+			dotLength := len(dotsAtTheEnd)
+
+			maxSummaryLength := maxTweetLength - (msgLength + urlLength + dotLength + newLinesCharCount)
+			summary := o.Issue.GetTitle()
+
+			if len(summary) > maxSummaryLength {
+				summary = summary[0:maxSummaryLength] + dotsAtTheEnd
+			}
+
+			msg += fmt.Sprintf("\n\n%s\n%s", summary, o.Issue.GetHTMLURL())
+
 			cache.Set(stringValue(o.Issue.HTMLURL), "tweeted", cacheExpiration)
+
 			twitterClient.Tweet(msg)
 		}
 
