@@ -86,7 +86,7 @@ func init() {
 	initSlack(secrets)
 }
 
-//Handle handles the function call
+//Handle handles the function call to function
 func Handle(w http.ResponseWriter, r *http.Request) {
 	if credentialsError != nil {
 		w.WriteHeader(http.StatusInternalServerError)
