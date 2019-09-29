@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -14,6 +15,11 @@ import (
 	gocache "github.com/patrickmn/go-cache"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
+)
+
+const (
+	gfiAnalyticsHost = "rajatjindal.o6s.io"
+	gfiAnalyticsPath = "/gfi-analytics"
 )
 
 // func main() {
@@ -157,7 +163,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 		if msg != "" {
 			msg += fmt.Sprintf(" for %s", stringValue(o.Repo.FullName))
 			if o.Repo.Language != nil {
-				msg += fmt.Sprintf("#%s", stringValue(o.Repo.Language))
+				msg += fmt.Sprintf(" #%s", stringValue(o.Repo.Language))
 			}
 
 			//if we have entry for specific repo use that,
@@ -174,8 +180,20 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
+			var ghu = o.Issue.GetHTMLURL()
+			if o.Repo.Owner.GetLogin() == "rajatjindal" {
+				ghuu := url.URL{
+					Scheme:   "https",
+					Host:     gfiAnalyticsHost,
+					Path:     gfiAnalyticsPath,
+					RawQuery: fmt.Sprintf("gfi=%s", url.QueryEscape(o.Issue.GetHTMLURL())),
+				}
+
+				ghu = ghuu.String()
+			}
+
 			msgLength := len(msg)
-			urlLength := len(o.Issue.GetHTMLURL())
+			urlLength := len(ghu)
 			dotLength := len(dotsAtTheEnd)
 
 			maxSummaryLength := maxTweetLength - (msgLength + urlLength + dotLength + newLinesCharCount)
@@ -185,7 +203,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 				summary = summary[0:maxSummaryLength] + dotsAtTheEnd
 			}
 
-			msg += fmt.Sprintf("\n\n%s\n%s", summary, o.Issue.GetHTMLURL())
+			msg += fmt.Sprintf("\n\n%s\n%s", summary, ghu)
 
 			cache.Set(stringValue(o.Issue.HTMLURL), "tweeted", cacheExpiration)
 
