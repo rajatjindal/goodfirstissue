@@ -180,17 +180,14 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
-			var ghu = o.Issue.GetHTMLURL()
-			if o.Repo.Owner.GetLogin() == "rajatjindal" {
-				ghuu := url.URL{
-					Scheme:   "https",
-					Host:     gfiAnalyticsHost,
-					Path:     gfiAnalyticsPath,
-					RawQuery: fmt.Sprintf("gfi=%s", url.QueryEscape(o.Issue.GetHTMLURL())),
-				}
-
-				ghu = ghuu.String()
+			ghuu := url.URL{
+				Scheme:   "https",
+				Host:     gfiAnalyticsHost,
+				Path:     gfiAnalyticsPath,
+				RawQuery: fmt.Sprintf("gfi=%s", url.QueryEscape(o.Issue.GetHTMLURL())),
 			}
+
+			ghu := ghuu.String()
 
 			msgLength := len(msg)
 			urlLength := len(ghu)
