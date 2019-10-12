@@ -34,21 +34,23 @@ Orgs/Users who have enabled `goodfirstissue` for all/selected repositories (gene
 
 | Org/User | Repository |
 | ------ | ------ |
+| [fastify](https://github.com/fastify) | [All](https://github.com/fastify) |
 | [asyncapi](https://github.com/asyncapi) | [All](https://github.com/asyncapi) |
 | [zuzakistan](https://github.com/zuzakistan) | [All](https://github.com/zuzakistan) |
 | [tektoncd](https://github.com/tektoncd) | [All](https://github.com/tektoncd) |
 | [helm](https://github.com/helm) | [All](https://github.com/helm) |
-| [storyscript](https://github.com/storyscript) | [All](https://github.com/storyscript) |
 | [openfaas](https://github.com/openfaas) | [All](https://github.com/openfaas) |
-| [rajatjindal](https://github.com/rajatjindal) | - [github-app-installations](https://github.com/rajatjindal/github-app-installations)<br/>- [goodfirstissue](https://github.com/rajatjindal/goodfirstissue) |
+| [storyscript](https://github.com/storyscript) | [All](https://github.com/storyscript) |
 | [citrusframework](https://github.com/citrusframework) | - [citrus](https://github.com/citrusframework/citrus)<br/>- [citrus-db](https://github.com/citrusframework/citrus-db)<br/>- [citrus-simulator](https://github.com/citrusframework/citrus-simulator) |
-| [reactiverse](https://github.com/reactiverse) | [es4x](https://github.com/reactiverse/es4x) |
-| [pmlopes](https://github.com/pmlopes) | [vertx-starter](https://github.com/pmlopes/vertx-starter) |
-| [Ewocker](https://github.com/Ewocker) | [vue-lodash](https://github.com/Ewocker/vue-lodash) |
+| [sakuli](https://github.com/sakuli) | [sakuli](https://github.com/sakuli/sakuli) |
 | [google](https://github.com/google) | [go-github](https://github.com/google/go-github) |
+| [nut-tree](https://github.com/nut-tree) | - [nut.js](https://github.com/nut-tree/nut.js)<br/>- [secrets](https://github.com/nut-tree/secrets)<br/>- [trailmix](https://github.com/nut-tree/trailmix) |
+| [reactiverse](https://github.com/reactiverse) | [es4x](https://github.com/reactiverse/es4x) |
 | [jetstack](https://github.com/jetstack) | [cert-manager](https://github.com/jetstack/cert-manager) |
-| [alexellis](https://github.com/alexellis) | - [derek](https://github.com/alexellis/derek)<br/>- [github-exporter](https://github.com/alexellis/github-exporter)<br/>- [inlets](https://github.com/alexellis/inlets)<br/>- [minikube-operator](https://github.com/alexellis/minikube-operator)<br/>- [ubiquitous-octo-guacamole](https://github.com/alexellis/ubiquitous-octo-guacamole) |
-
+| [pmlopes](https://github.com/pmlopes) | [vertx-starter](https://github.com/pmlopes/vertx-starter) |
+| [rajatjindal](https://github.com/rajatjindal) | - [github-app-installations](https://github.com/rajatjindal/github-app-installations)<br/>- [goodfirstissue](https://github.com/rajatjindal/goodfirstissue)<br/>- [krew-plugin-release](https://github.com/rajatjindal/krew-plugin-release)<br/>- [kubectl-modify-secret](https://github.com/rajatjindal/kubectl-modify-secret) |
+| [alexellis](https://github.com/alexellis) | - [derek](https://github.com/alexellis/derek)<br/>- [expressjs-k8s](https://github.com/alexellis/expressjs-k8s)<br/>- [github-exporter](https://github.com/alexellis/github-exporter)<br/>- [inlets](https://github.com/alexellis/inlets)<br/>- [inlets-operator](https://github.com/alexellis/inlets-operator)<br/>- and 4 more... |
+| [Ewocker](https://github.com/Ewocker) | [vue-lodash](https://github.com/Ewocker/vue-lodash) |%
 
 # Acknowledgements
 
