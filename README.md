@@ -30,7 +30,8 @@ The github app needs `read` access to `issues` and `metadata` of the repository.
 
 # Current users
 
-Orgs/Users who have enabled `goodfirstissue` for all/selected repositories (generated using [github-app-installations](https://github.com/rajatjindal/github-app-installations))
+Orgs/Users who have enabled `goodfirstissue` for atleast one repository (generated using [github-app-installations](https://github.com/rajatjindal/github-app-installations))
+
 <a href="https://github.com/developerfred"><img src="https://github.com/developerfred.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/helm"><img src="https://github.com/helm.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/asyncapi"><img src="https://github.com/asyncapi.png" width="100"></a><span width="10px">&nbsp;</span>
@@ -51,8 +52,7 @@ Orgs/Users who have enabled `goodfirstissue` for all/selected repositories (gene
 <a href="https://github.com/citrusframework"><img src="https://github.com/citrusframework.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/Ewocker"><img src="https://github.com/Ewocker.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/nut-tree"><img src="https://github.com/nut-tree.png" width="100"></a><span width="10px">&nbsp;</span>
-* Connection #0 to host rajatjindal.o6s.io left intact
-<a href="https://github.com/alexellis"><img src="https://github.com/alexellis.png" width="100"></a><span width="10px">&nbsp;</span>%
+<a href="https://github.com/alexellis"><img src="https://github.com/alexellis.png" width="100"></a><span width="10px">&nbsp;</span>
 
 
 # Acknowledgements
