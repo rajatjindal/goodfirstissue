@@ -52,7 +52,7 @@ Orgs/Users who have enabled `goodfirstissue` for atleast one repository (generat
 <a href="https://github.com/nut-tree"><img src="https://github.com/nut-tree.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/rajatjindal"><img src="https://github.com/rajatjindal.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/alexellis"><img src="https://github.com/alexellis.png" width="100"></a><span width="10px">&nbsp;</span>
-<a href="https://github.com/jetstack"><img src="https://github.com/jetstack.png" width="100"></a><span width="10px">&nbsp;</span>%
+<a href="https://github.com/jetstack"><img src="https://github.com/jetstack.png" width="100"></a><span width="10px">&nbsp;</span>
 # Acknowledgements
 
 Many thanks to [Alex Ellis](https://twitter.com/alexellisuk) for helping me write, build and deploy this openfaas-function to [openfaas-cloud](https://github.com/openfaas/openfaas-cloud).
