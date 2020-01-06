@@ -31,6 +31,7 @@ The github app needs `read` access to `issues` and `metadata` of the repository.
 # Current users
 
 Orgs/Users who have enabled `goodfirstissue` for atleast one repository (generated using [github-app-installations](https://github.com/rajatjindal/github-app-installations))
+
 <a href="https://github.com/zuzakistan"><img src="https://github.com/zuzakistan.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/HospitalRun"><img src="https://github.com/HospitalRun.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/openfaas-incubator"><img src="https://github.com/openfaas-incubator.png" width="100"></a><span width="10px">&nbsp;</span>
