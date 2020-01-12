@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"strings"
 	"time"
 
@@ -15,11 +14,6 @@ import (
 	gocache "github.com/patrickmn/go-cache"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
-)
-
-const (
-	gfiAnalyticsHost = "rajatjindal.o6s.io"
-	gfiAnalyticsPath = "/gfi-analytics"
 )
 
 // func main() {
@@ -180,17 +174,8 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
-			ghuu := url.URL{
-				Scheme:   "https",
-				Host:     gfiAnalyticsHost,
-				Path:     gfiAnalyticsPath,
-				RawQuery: fmt.Sprintf("gfi=%s", url.QueryEscape(o.Issue.GetHTMLURL())),
-			}
-
-			ghu := ghuu.String()
-
 			msgLength := len(msg)
-			urlLength := len(ghu)
+			urlLength := len(o.Issue.GetHTMLURL())
 			dotLength := len(dotsAtTheEnd)
 
 			maxSummaryLength := maxTweetLength - (msgLength + urlLength + dotLength + newLinesCharCount)
@@ -200,7 +185,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 				summary = summary[0:maxSummaryLength] + dotsAtTheEnd
 			}
 
-			msg += fmt.Sprintf("\n\n%s\n%s", summary, ghu)
+			msg += fmt.Sprintf("\n\n%s\n%s", summary, o.Issue.GetHTMLURL())
 
 			cache.Set(stringValue(o.Issue.HTMLURL), "tweeted", cacheExpiration)
 
