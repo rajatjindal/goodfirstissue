@@ -66,6 +66,7 @@ func initCredentials() (*Secrets, error) {
 		return nil, fmt.Errorf("failed to read credentials file with err: %s", err.Error())
 	}
 
+	logrus.Info(string(r))
 	t := &Secrets{}
 	err = yaml.Unmarshal(r, t)
 	if err != nil {
