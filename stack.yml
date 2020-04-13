@@ -1,10 +1,11 @@
+version: 1.0
 provider:
   name: faas
   gateway: http://127.0.0.1:8080
 
 functions:
   goodfirstissue:
-    lang: golang-middleware
+    lang: go
     handler: ./goodfirstissue
     image: goodfirstissue:0.1
     labels:
