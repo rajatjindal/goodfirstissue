@@ -32,29 +32,32 @@ The github app needs `read` access to `issues` and `metadata` of the repository.
 
 Orgs/Users who have enabled `goodfirstissue` for atleast one repository (generated using [github-app-installations](https://github.com/rajatjindal/github-app-installations))
 
-<a href="https://github.com/zuzakistan"><img src="https://github.com/zuzakistan.png" width="100"></a><span width="10px">&nbsp;</span>
+<a href="https://github.com/openfaas"><img src="https://github.com/openfaas.png" width="100"></a><span width="10px">&nbsp;</span>
+<a href="https://github.com/jetstack"><img src="https://github.com/jetstack.png" width="100"></a><span width="10px">&nbsp;</span>
+<a href="https://github.com/tektoncd"><img src="https://github.com/tektoncd.png" width="100"></a><span width="10px">&nbsp;</span>
+<a href="https://github.com/apache"><img src="https://github.com/apache.png" width="100"></a><span width="10px">&nbsp;</span>
+<a href="https://github.com/google"><img src="https://github.com/google.png" width="100"></a><span width="10px">&nbsp;</span>
+<a href="https://github.com/helm"><img src="https://github.com/helm.png" width="100"></a><span width="10px">&nbsp;</span>
+<a href="https://github.com/yanyu95"><img src="https://github.com/yanyu95.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/HospitalRun"><img src="https://github.com/HospitalRun.png" width="100"></a><span width="10px">&nbsp;</span>
-<a href="https://github.com/openfaas-incubator"><img src="https://github.com/openfaas-incubator.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/developerfred"><img src="https://github.com/developerfred.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/inlets"><img src="https://github.com/inlets.png" width="100"></a><span width="10px">&nbsp;</span>
+<a href="https://github.com/openfaas-incubator"><img src="https://github.com/openfaas-incubator.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/fastify"><img src="https://github.com/fastify.png" width="100"></a><span width="10px">&nbsp;</span>
-<a href="https://github.com/tektoncd"><img src="https://github.com/tektoncd.png" width="100"></a><span width="10px">&nbsp;</span>
-<a href="https://github.com/helm"><img src="https://github.com/helm.png" width="100"></a><span width="10px">&nbsp;</span>
-<a href="https://github.com/storyscript"><img src="https://github.com/storyscript.png" width="100"></a><span width="10px">&nbsp;</span>
-<a href="https://github.com/openfaas"><img src="https://github.com/openfaas.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/asyncapi"><img src="https://github.com/asyncapi.png" width="100"></a><span width="10px">&nbsp;</span>
-<a href="https://github.com/Ewocker"><img src="https://github.com/Ewocker.png" width="100"></a><span width="10px">&nbsp;</span>
-<a href="https://github.com/carsonoid"><img src="https://github.com/carsonoid.png" width="100"></a><span width="10px">&nbsp;</span>
-<a href="https://github.com/jetstack"><img src="https://github.com/jetstack.png" width="100"></a><span width="10px">&nbsp;</span>
-<a href="https://github.com/reactiverse"><img src="https://github.com/reactiverse.png" width="100"></a><span width="10px">&nbsp;</span>
-<a href="https://github.com/apache"><img src="https://github.com/apache.png" width="100"></a><span width="10px">&nbsp;</span>
-<a href="https://github.com/pmlopes"><img src="https://github.com/pmlopes.png" width="100"></a><span width="10px">&nbsp;</span>
-<a href="https://github.com/rajatjindal"><img src="https://github.com/rajatjindal.png" width="100"></a><span width="10px">&nbsp;</span>
-<a href="https://github.com/nut-tree"><img src="https://github.com/nut-tree.png" width="100"></a><span width="10px">&nbsp;</span>
-<a href="https://github.com/google"><img src="https://github.com/google.png" width="100"></a><span width="10px">&nbsp;</span>
+<a href="https://github.com/zuzakistan"><img src="https://github.com/zuzakistan.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/alexellis"><img src="https://github.com/alexellis.png" width="100"></a><span width="10px">&nbsp;</span>
+<a href="https://github.com/rajatjindal"><img src="https://github.com/rajatjindal.png" width="100"></a><span width="10px">&nbsp;</span>
+<a href="https://github.com/reactiverse"><img src="https://github.com/reactiverse.png" width="100"></a><span width="10px">&nbsp;</span>
+<a href="https://github.com/Ewocker"><img src="https://github.com/Ewocker.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/sakuli"><img src="https://github.com/sakuli.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/citrusframework"><img src="https://github.com/citrusframework.png" width="100"></a><span width="10px">&nbsp;</span>
+<a href="https://github.com/pmlopes"><img src="https://github.com/pmlopes.png" width="100"></a><span width="10px">&nbsp;</span>
+<a href="https://github.com/carsonoid"><img src="https://github.com/carsonoid.png" width="100"></a><span width="10px">&nbsp;</span>
+<a href="https://github.com/nut-tree"><img src="https://github.com/nut-tree.png" width="100"></a><span width="10px">&nbsp;</span>
+<a href="https://github.com/hantsy"><img src="https://github.com/hantsy.png" width="100"></a><span width="10px">&nbsp;</span>
+<a href="https://github.com/akulsr0"><img src="https://github.com/akulsr0.png" width="100"></a><span width="10px">&nbsp;</span>
+<a href="https://github.com/Retenodus"><img src="https://github.com/Retenodus.png" width="100"></a><span width="10px">&nbsp;</span>
 
 # Acknowledgements
 
