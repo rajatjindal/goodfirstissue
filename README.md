@@ -38,6 +38,8 @@ Orgs/Users who have enabled `goodfirstissue` for atleast one repository (generat
 <a href="https://github.com/apache"><img src="https://github.com/apache.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/google"><img src="https://github.com/google.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/helm"><img src="https://github.com/helm.png" width="100"></a><span width="10px">&nbsp;</span>
+<a href="https://github.com/adobe"><img src="https://github.com/adobe.png" width="100"></a><span width="10px">&nbsp;</span>
+<a href="https://github.com/mui-org"><img src="https://github.com/mui-org.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/yanyu95"><img src="https://github.com/yanyu95.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/HospitalRun"><img src="https://github.com/HospitalRun.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/developerfred"><img src="https://github.com/developerfred.png" width="100"></a><span width="10px">&nbsp;</span>
