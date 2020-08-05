@@ -41,6 +41,7 @@ Orgs/Users who have enabled `goodfirstissue` for atleast one repository (generat
 <a href="https://github.com/adobe"><img src="https://github.com/adobe.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/linkerd"><img src="https://github.com/linkerd.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/mui-org"><img src="https://github.com/mui-org.png" width="100"></a><span width="10px">&nbsp;</span>
+<a href="https://github.com/RustScan"><img src="https://github.com/RustScan.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/yanyu95"><img src="https://github.com/yanyu95.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/HospitalRun"><img src="https://github.com/HospitalRun.png" width="100"></a><span width="10px">&nbsp;</span>
 <a href="https://github.com/developerfred"><img src="https://github.com/developerfred.png" width="100"></a><span width="10px">&nbsp;</span>
