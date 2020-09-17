@@ -66,3 +66,4 @@ Orgs/Users who have enabled `goodfirstissue` for atleast one repository (generat
 # Acknowledgements
 
 Many thanks to [Alex Ellis](https://twitter.com/alexellisuk) for helping me write, build and deploy this openfaas-function to [openfaas-cloud](https://github.com/openfaas/openfaas-cloud).
+
