@@ -42,7 +42,7 @@ var (
 	cache = gocache.New(cacheExpiration, 2*time.Minute)
 )
 
-//Secrets are secrets for this function
+// Secrets are secrets for this function
 type Secrets struct {
 	TwitterTokens *twitter.Tokens `yaml:"twitter"`
 	SlackTokens   *slack.Tokens   `yaml:"slack"`
@@ -86,7 +86,7 @@ func init() {
 	initSlack(secrets)
 }
 
-//Handle handles the function call to function
+// Handle handles the function call to function
 func Handle(w http.ResponseWriter, r *http.Request) {
 	if credentialsError != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -156,7 +156,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 		//send to twitter
 		if msg != "" {
 			msg += fmt.Sprintf(" for %s", stringValue(o.Repo.FullName))
-			if o.Repo.Language != nil {
+			if stringValue(o.Repo.FullName) != "codinasion/program" && o.Repo.Language != nil {
 				msg += fmt.Sprintf(" #%s", stringValue(o.Repo.Language))
 			}
 
