@@ -2,3 +2,4 @@ build/
 template/
 goodfirstissue.yaml
 deployment-prod
+vendor
