@@ -1,25 +1,28 @@
 package twitter
 
 import (
+	"fmt"
+
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
-	"github.com/sirupsen/logrus"
 )
 
-//Tokens is for twitter tokens
+// Tokens is for twitter tokens
+//
+//easyjson:json
 type Tokens struct {
-	ConsumerKey   string `yaml:"consumerKey"`
-	ConsumerToken string `yaml:"consumerToken"`
-	Token         string `yaml:"token"`
-	TokenSecret   string `yaml:"tokenSecret"`
+	ConsumerKey   string `json:"consumerKey"`
+	ConsumerToken string `json:"consumerToken"`
+	Token         string `json:"token"`
+	TokenSecret   string `json:"tokenSecret"`
 }
 
-//Client is twitter client
+// Client is twitter client
 type Client struct {
 	twitter *twitter.Client
 }
 
-//NewClient returns new twitter client
+// NewClient returns new twitter client
 func NewClient(t *Tokens) (*Client, error) {
 	config := oauth1.NewConfig(t.ConsumerKey, t.ConsumerToken)
 	token := oauth1.NewToken(t.Token, t.TokenSecret)
@@ -31,11 +34,11 @@ func NewClient(t *Tokens) (*Client, error) {
 	}, nil
 }
 
-//Tweet tweets
+// Tweet tweets
 func (c *Client) Tweet(msg string) {
 	_, _, err := c.twitter.Statuses.Update(msg, nil)
 	if err != nil {
-		logrus.Error(err)
+		fmt.Println(err)
 		return
 	}
 }

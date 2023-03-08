@@ -8,11 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rajatjindal/goodfirstissue/twitter"
-
 	"github.com/google/go-github/github"
-	"github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
+	"github.com/rajatjindal/goodfirstissue/twitter"
 )
 
 func main() {
@@ -31,44 +28,24 @@ const (
 var (
 	credentialsError error
 
-	twitterMap           map[string]string
 	twitterClient        *twitter.Client
 	twitterClientInitErr error
 )
 
-// Secrets are secrets for this function
-type Secrets struct {
-	TwitterTokens *twitter.Tokens `yaml:"twitter"`
-}
-
-func initTwitter(s *Secrets) {
-	twitterClient, twitterClientInitErr = twitter.NewClient(s.TwitterTokens)
-	twitterMap = twitter.GetTwitterHandleMap()
-}
-
-func initCredentials() (*Secrets, error) {
-	r, err := os.ReadFile(credentialsFile)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read credentials file with err: %s", err.Error())
-	}
-
-	t := &Secrets{}
-	err = yaml.Unmarshal(r, t)
-	if err != nil {
-		return nil, err
-	}
-
-	return t, nil
-}
-
 func init() {
-	var secrets *Secrets
-	secrets, credentialsError = initCredentials()
-	if credentialsError != nil {
-		return
+	// raw, err := os.ReadFile(credentialsFile)
+	// if err != nil {
+	// 	logrus.Fatal("failed to read creds file %v", err)
+	// }
+
+	tokens := &twitter.Tokens{}
+	err := tokens.UnmarshalJSON([]byte("{}"))
+	if err != nil {
+		fmt.Printf("failed to marshal creds content %v\n", err)
+		os.Exit(1)
 	}
 
-	initTwitter(secrets)
+	twitterClient, twitterClientInitErr = twitter.NewClient(tokens)
 }
 
 // Handle handles the function call to function
@@ -93,7 +70,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 
 	t := github.WebHookType(r)
 	if t == "" {
-		logrus.Error("header 'X-GitHub-Event' not found. cannot handle this request")
+		fmt.Printf("header 'X-GitHub-Event' not found. cannot handle this request\n")
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("header 'X-GitHub-Event' not found."))
 		return
@@ -101,16 +78,16 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		logrus.Error("failed to read request body. error: ", err.Error())
+		fmt.Printf("failed to read request body. error: %v\n", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("failed to read request body."))
 		return
 	}
-	logrus.Tracef("%s", string(body))
+	fmt.Printf("body is %s\n", string(body))
 
 	e, err := github.ParseWebHook(t, body)
 	if err != nil {
-		logrus.Error("failed to parsepayload. error: ", err.Error())
+		fmt.Printf("failed to parsepayload. error: %v\n", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("failed to parse payload."))
 		return
@@ -139,20 +116,6 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 			msg += fmt.Sprintf(" for %s", stringValue(o.Repo.FullName))
 			if stringValue(o.Repo.FullName) != "codinasion/program" && o.Repo.Language != nil {
 				msg += fmt.Sprintf(" #%s", stringValue(o.Repo.Language))
-			}
-
-			//if we have entry for specific repo use that,
-			//else fallback to check if entry exist for owner of repo
-			tHandle := ""
-			ok := false
-			if tHandle, ok = twitterMap[stringValue(o.Repo.FullName)]; ok && tHandle != "" {
-				msg += fmt.Sprintf(" @%s", tHandle)
-			}
-
-			if tHandle == "" {
-				if tHandle, ok = twitterMap[stringValue(o.Repo.Owner.Login)]; ok && tHandle != "" {
-					msg += fmt.Sprintf(" @%s", tHandle)
-				}
 			}
 
 			msgLength := len(msg)
