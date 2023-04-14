@@ -1,11 +1,14 @@
 package twitter
 
 import (
+	"context"
 	"errors"
+	"net/http"
+
 	//lint:ignore SA1019 ignore this for now!
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
-	"github.com/sirupsen/logrus"
+	"github.com/rajatjindal/goodfirstissue/logrus"
 )
 
 // ErrTweetFailed is for failed tweet
@@ -25,10 +28,10 @@ type Client struct {
 }
 
 // NewClient returns new twitter client
-func NewClient(t *Tokens) (*Client, error) {
+func NewClient(client *http.Client, t *Tokens) (*Client, error) {
 	config := oauth1.NewConfig(t.ConsumerKey, t.ConsumerToken)
 	token := oauth1.NewToken(t.Token, t.TokenSecret)
-	httpClient := config.Client(oauth1.NoContext, token)
+	httpClient := config.Client(context.WithValue(oauth1.NoContext, oauth1.HTTPClient, client), token)
 
 	// Twitter client
 	return &Client{

@@ -5,10 +5,8 @@ go 1.20
 require (
 	github.com/dghubble/go-twitter v0.0.0-20221104224141-912508c3888b
 	github.com/dghubble/oauth1 v0.7.2
+	github.com/fermyon/spin/sdk/go v1.0.0-rc.1.0.20230413224726-a1944a33a7c3
 	github.com/google/go-github/v51 v51.0.0
-	github.com/patrickmn/go-cache v2.1.0+incompatible
-	github.com/sirupsen/logrus v1.9.0
-	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
@@ -18,6 +16,7 @@ require (
 	github.com/dghubble/sling v1.4.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
+	github.com/julienschmidt/httprouter v1.3.0 // indirect
 	github.com/stretchr/testify v1.8.2 // indirect
 	golang.org/x/crypto v0.7.0 // indirect
 	golang.org/x/net v0.8.0 // indirect

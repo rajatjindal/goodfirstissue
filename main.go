@@ -1,19 +1,18 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
-	"github.com/rajatjindal/goodfirstissue/twitter"
-
+	spinhttp "github.com/fermyon/spin/sdk/go/http"
 	"github.com/google/go-github/v51/github"
-	gocache "github.com/patrickmn/go-cache"
-	"github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
+	"github.com/rajatjindal/goodfirstissue/cache"
+	"github.com/rajatjindal/goodfirstissue/logrus"
+	"github.com/rajatjindal/goodfirstissue/twitter"
 )
 
 const (
@@ -27,49 +26,39 @@ const (
 type WebhookHandler struct {
 	Twitter          *twitter.Client
 	TwitterHandleMap map[string]string
-	cache            *gocache.Cache
 }
 
-func main() {
-	secrets, err := initCredentials()
-	if err != nil {
-		logrus.Fatalf("failed to init creds %v", err)
-	}
+func init() {
+	spinhttp.Handle(func(w http.ResponseWriter, r *http.Request) {
+		tokens := &twitter.Tokens{
+			ConsumerKey:   "",
+			ConsumerToken: "",
+			Token:         "",
+			TokenSecret:   "",
+		}
 
-	client, err := twitter.NewClient(secrets)
-	if err != nil {
-		logrus.Fatalf("failed to create twitter client %v", err)
-	}
+		spinhttpclient := spinhttp.NewClient()
+		client, err := twitter.NewClient(spinhttpclient, tokens)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
-	twitterHandleMap := twitter.GetTwitterHandleMap()
-	handler := &WebhookHandler{
-		Twitter:          client,
-		TwitterHandleMap: twitterHandleMap,
-		cache:            gocache.New(cacheExpiration, 2*time.Minute),
-	}
+		twitterHandleMap := twitter.GetTwitterHandleMap()
+		handler := &WebhookHandler{
+			Twitter:          client,
+			TwitterHandleMap: twitterHandleMap,
+		}
 
-	http.HandleFunc("/", handler.Handle)
-	logrus.Fatal(http.ListenAndServe(":8080", nil))
+		handler.Handle(w, r)
+	})
 }
 
-func initCredentials() (*twitter.Tokens, error) {
-	r, err := os.ReadFile(credentialsFile)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read credentials file with err: %s", err.Error())
-	}
-
-	t := &twitter.Tokens{}
-	err = yaml.Unmarshal(r, t)
-	if err != nil {
-		return nil, err
-	}
-
-	return t, nil
-}
+func main() {}
 
 // Handle handles the function call to function
 func (h *WebhookHandler) Handle(w http.ResponseWriter, r *http.Request) {
-	event, err := parseEvent(r)
+	event, err := parseEventForSpin(r)
 	if err != nil {
 		logrus.Error(err)
 		http.Error(w, "failed to process the event", http.StatusInternalServerError)
@@ -84,7 +73,7 @@ func (h *WebhookHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// already tweeted about it few mins back
-	if _, found := h.cache.Get(event.Issue.GetHTMLURL()); found {
+	if _, found := cache.Get(event.Issue.GetHTMLURL()); found {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("OK"))
 		return
@@ -103,6 +92,11 @@ func (h *WebhookHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		logrus.Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	err = cache.Set(event.Issue.GetHTMLURL(), true)
+	if err != nil {
+		logrus.Warnf("failed to cache. Error %v", err)
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -140,7 +134,6 @@ func parseEvent(r *http.Request) (*github.IssuesEvent, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to read request body. Error: %v", err)
 	}
-	logrus.Tracef("%s", string(body))
 
 	raw, err := github.ParseWebHook(t, body)
 	if err != nil {
@@ -150,6 +143,44 @@ func parseEvent(r *http.Request) (*github.IssuesEvent, error) {
 	event, ok := raw.(*github.IssuesEvent)
 	if !ok {
 		return nil, fmt.Errorf("event not supported. Error: %v", err)
+	}
+
+	return event, nil
+}
+
+func parseEventForSpin(r *http.Request) (*github.IssuesEvent, error) {
+	if r.Body == nil {
+		return nil, fmt.Errorf("request body cannot be empty")
+	}
+
+	webhookType := github.WebHookType(r)
+	if webhookType == "" {
+		return nil, fmt.Errorf("header 'X-GitHub-Event' not found")
+	}
+
+	if webhookType != "issues" {
+		return nil, fmt.Errorf("unsupported event %s", webhookType)
+	}
+
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read request body. Error: %v", err)
+	}
+
+	x := "IssuesEvent"
+	rawEvent := github.Event{
+		Type:       &x,
+		RawPayload: (*json.RawMessage)(&body),
+	}
+
+	raw, err := rawEvent.ParsePayload()
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse payload. Error: %v", err)
+	}
+
+	event, ok := raw.(*github.IssuesEvent)
+	if !ok {
+		return nil, fmt.Errorf("event not supported. type is %T", raw)
 	}
 
 	return event, nil
