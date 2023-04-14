@@ -10,7 +10,7 @@ import (
 
 	"github.com/rajatjindal/goodfirstissue/twitter"
 
-	"github.com/google/go-github/github"
+	"github.com/google/go-github/v51/github"
 	gocache "github.com/patrickmn/go-cache"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
@@ -31,7 +31,6 @@ type WebhookHandler struct {
 }
 
 func main() {
-
 	secrets, err := initCredentials()
 	if err != nil {
 		logrus.Fatalf("failed to init creds %v", err)
@@ -50,7 +49,7 @@ func main() {
 	}
 
 	http.HandleFunc("/", handler.Handle)
-	http.ListenAndServe(":8080", nil)
+	logrus.Fatal(http.ListenAndServe(":8080", nil))
 }
 
 func initCredentials() (*twitter.Tokens, error) {
@@ -70,115 +69,56 @@ func initCredentials() (*twitter.Tokens, error) {
 
 // Handle handles the function call to function
 func (h *WebhookHandler) Handle(w http.ResponseWriter, r *http.Request) {
-	if r.Body == nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("request body cannot be empty"))
-		return
-	}
-
-	t := github.WebHookType(r)
-	if t == "" {
-		logrus.Error("header 'X-GitHub-Event' not found. cannot handle this request")
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("header 'X-GitHub-Event' not found."))
-		return
-	}
-
-	body, err := io.ReadAll(r.Body)
+	event, err := parseEvent(r)
 	if err != nil {
-		logrus.Error("failed to read request body. error: ", err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to read request body."))
-		return
-	}
-	logrus.Tracef("%s", string(body))
-
-	e, err := github.ParseWebHook(t, body)
-	if err != nil {
-		logrus.Error("failed to parsepayload. error: ", err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("failed to parse payload."))
+		logrus.Error(err)
+		http.Error(w, "failed to process the event", http.StatusInternalServerError)
 		return
 	}
 
-	msg := ""
-	if o, ok := e.(*github.IssuesEvent); ok && goodFirstIssue(o.Issue.Labels) {
-		if _, found := h.cache.Get(stringValue(o.Issue.HTMLURL)); found {
-			w.WriteHeader(http.StatusOK)
-			w.Write([]byte("OK"))
-			return
-		}
-
-		//TODO: add logic to not retweet same issue
-		switch stringValue(o.Action) {
-		case "opened":
-			msg = "a new #goodfirstissue opened"
-		case "reopened":
-			msg = "a #goodfirstissue got reopened"
-		case "labeled":
-			if stringValue(o.Issue.State) == "open" {
-				msg = "an issue just got labeled #goodfirstissue"
-			}
-		case "unassigned":
-			if stringValue(o.Issue.State) == "open" {
-				msg = "an issue just got available for assignment #goodfirstissue"
-			}
-		}
-
-		//send to twitter
-		if msg != "" {
-			msg += fmt.Sprintf(" for %s", stringValue(o.Repo.FullName))
-			if stringValue(o.Repo.FullName) != "codinasion/program" && o.Repo.Language != nil {
-				msg += fmt.Sprintf(" #%s", stringValue(o.Repo.Language))
-			}
-
-			//if we have entry for specific repo use that,
-			//else fallback to check if entry exist for owner of repo
-			tHandle := ""
-			ok := false
-			if tHandle, ok = h.TwitterHandleMap[stringValue(o.Repo.FullName)]; ok && tHandle != "" {
-				msg += fmt.Sprintf(" @%s", tHandle)
-			}
-
-			if tHandle == "" {
-				if tHandle, ok = h.TwitterHandleMap[stringValue(o.Repo.Owner.Login)]; ok && tHandle != "" {
-					msg += fmt.Sprintf(" @%s", tHandle)
-				}
-			}
-
-			msgLength := len(msg)
-			urlLength := len(o.Issue.GetHTMLURL())
-			dotLength := len(dotsAtTheEnd)
-
-			maxSummaryLength := maxTweetLength - (msgLength + urlLength + dotLength + newLinesCharCount)
-			summary := o.Issue.GetTitle()
-
-			if len(summary) > maxSummaryLength {
-				summary = summary[0:maxSummaryLength] + dotsAtTheEnd
-			}
-
-			msg += fmt.Sprintf("\n\n%s\n%s", summary, o.Issue.GetHTMLURL())
-			h.cache.Set(stringValue(o.Issue.HTMLURL), "tweeted", cacheExpiration)
-			h.Twitter.Tweet(msg)
-		}
+	// not a good first issue
+	if !goodFirstIssue(event.Issue.Labels) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("OK"))
+		return
 	}
 
+	// already tweeted about it few mins back
+	if _, found := h.cache.Get(event.Issue.GetHTMLURL()); found {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("OK"))
+		return
+	}
+
+	// format the tweet
+	msg := h.getMsg(event)
 	if msg == "" {
-		msg = "OK"
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("OK"))
+		return
 	}
+
+	err = h.Twitter.Tweet(msg)
+	if err != nil {
+		logrus.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(msg))
+	_, _ = w.Write([]byte(msg))
 }
 
-func goodFirstIssue(labels []github.Label) bool {
+func goodFirstIssue(labels []*github.Label) bool {
 	for _, l := range labels {
-		if stringValue(l.Name) == "good first issue" || stringValue(l.Name) == "good-first-issue" {
+		labelName := strings.ToLower(l.GetName())
+		if labelName == "good first issue" || labelName == "good-first-issue" {
 			return true
 		}
 
-		if strings.Contains(stringValue(l.Name), "good") &&
-			strings.Contains(stringValue(l.Name), "first") &&
-			strings.Contains(stringValue(l.Name), "issue") {
+		if strings.Contains(labelName, "good") &&
+			strings.Contains(labelName, "first") &&
+			strings.Contains(labelName, "issue") {
 			return true
 		}
 	}
@@ -186,10 +126,87 @@ func goodFirstIssue(labels []github.Label) bool {
 	return false
 }
 
-func stringValue(s *string) string {
-	if s == nil {
+func parseEvent(r *http.Request) (*github.IssuesEvent, error) {
+	if r.Body == nil {
+		return nil, fmt.Errorf("request body cannot be empty")
+	}
+
+	t := github.WebHookType(r)
+	if t == "" {
+		return nil, fmt.Errorf("header 'X-GitHub-Event' not found")
+	}
+
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read request body. Error: %v", err)
+	}
+	logrus.Tracef("%s", string(body))
+
+	raw, err := github.ParseWebHook(t, body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse payload. Error: %v", err)
+	}
+
+	event, ok := raw.(*github.IssuesEvent)
+	if !ok {
+		return nil, fmt.Errorf("event not supported. Error: %v", err)
+	}
+
+	return event, nil
+}
+
+func (h *WebhookHandler) getMsg(event *github.IssuesEvent) string {
+	msg := ""
+	switch event.GetAction() {
+	case "opened":
+		msg = "a new #goodfirstissue opened"
+	case "reopened":
+		msg = "a #goodfirstissue got reopened"
+	case "labeled":
+		if event.Issue.GetState() == "open" {
+			msg = "an issue just got labeled #goodfirstissue"
+		}
+	case "unassigned":
+		if event.Issue.GetState() == "open" {
+			msg = "an issue just got available for assignment #goodfirstissue"
+		}
+	default:
+		logrus.Warnf("unsupported event action %s", event.GetAction())
 		return ""
 	}
 
-	return *s
+	//send to twitter
+	msg += fmt.Sprintf(" for %s", event.Repo.GetFullName())
+	if event.Repo.GetFullName() != "codinasion/program" && event.Repo.Language != nil {
+		msg += fmt.Sprintf(" #%s", event.Repo.GetLanguage())
+	}
+
+	//if we have entry for specific repo use that,
+	//else fallback to check if entry exist for owner of repo
+	tHandle := ""
+	ok := false
+	if tHandle, ok = h.TwitterHandleMap[event.Repo.GetFullName()]; ok && tHandle != "" {
+		msg += fmt.Sprintf(" @%s", tHandle)
+	}
+
+	if tHandle == "" {
+		if tHandle, ok = h.TwitterHandleMap[event.Repo.Owner.GetLogin()]; ok && tHandle != "" {
+			msg += fmt.Sprintf(" @%s", tHandle)
+		}
+	}
+
+	msgLength := len(msg)
+	urlLength := len(event.Issue.GetHTMLURL())
+	dotLength := len(dotsAtTheEnd)
+
+	maxSummaryLength := maxTweetLength - (msgLength + urlLength + dotLength + newLinesCharCount)
+	summary := event.Issue.GetTitle()
+
+	if len(summary) > maxSummaryLength {
+		summary = summary[0:maxSummaryLength] + dotsAtTheEnd
+	}
+
+	msg += fmt.Sprintf("\n\n%s\n%s", summary, event.Issue.GetHTMLURL())
+
+	return msg
 }

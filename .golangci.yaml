@@ -1,0 +1,4 @@
+issues:
+  exclude-rules:
+    - linters: [staticcheck]
+      text: github.com/dghubble/go-twitter/twitter
