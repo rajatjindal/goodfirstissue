@@ -41,7 +41,7 @@ func (c *Client) Tweet(msg string) error {
 	_, _, err := c.twitter.Statuses.Update(msg, nil)
 	if err != nil {
 		logrus.Error(err)
-		return err //some error
+		return err
 	}
 	return nil
 }
