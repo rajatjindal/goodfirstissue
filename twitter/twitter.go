@@ -2,6 +2,7 @@ package twitter
 
 import (
 	"errors"
+	//lint:ignore SA1019 ignore this for now!
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
 	"github.com/sirupsen/logrus"
