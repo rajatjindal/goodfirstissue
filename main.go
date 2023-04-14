@@ -50,7 +50,12 @@ func init() {
 			TwitterHandleMap: twitterHandleMap,
 		}
 
-		handler.Handle(w, r)
+		if r.URL.Path == "/webhook" {
+			handler.Handle(w, r)
+			return
+		}
+
+		fmt.Fprintln(w, "hello from goodfirstissue running on Fermyon Cloud")
 	})
 }
 
