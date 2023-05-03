@@ -55,11 +55,25 @@ func init() {
 			return
 		}
 
+		if r.URL.Path == "/cleanup-cache" {
+			handler.CleanCache(w, r)
+			return
+		}
+
 		fmt.Fprintln(w, "hello from goodfirstissue running on Fermyon Cloud")
 	})
 }
 
 func main() {}
+
+// Handle handles the function call to function
+func (h *WebhookHandler) CleanCache(w http.ResponseWriter, r *http.Request) {
+	err := cache.CleanupCache()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
 
 // Handle handles the function call to function
 func (h *WebhookHandler) Handle(w http.ResponseWriter, r *http.Request) {

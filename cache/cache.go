@@ -2,6 +2,7 @@ package cache
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/fermyon/spin/sdk/go/key_value"
@@ -34,6 +35,25 @@ func Get(key string) (interface{}, bool) {
 	}
 
 	return withExpiry.Raw, true
+}
+
+func CleanupCache() error {
+	store, err := get_store()
+	if err != nil {
+		return err
+	}
+
+	keys, err := key_value.GetKeys(store)
+	fmt.Printf("total %d keys found\n", len(keys))
+
+	for _, key := range keys {
+		err = key_value.Delete(store, key)
+		if err != nil {
+			fmt.Printf("ERROR deleting key %s\n", key)
+		}
+	}
+
+	return nil
 }
 
 func Set(key string, value interface{}) error {
