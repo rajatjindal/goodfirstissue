@@ -9,6 +9,7 @@ version = "0.1.0"
 id = "goodfirstissue"
 source = "main.wasm"
 allowed_http_hosts = ["api.twitter.com"]
+key_value_stores = ["default"]
 [component.trigger]
 route = "/..."
 [component.build]
