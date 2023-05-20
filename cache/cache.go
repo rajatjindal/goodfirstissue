@@ -2,10 +2,10 @@ package cache
 
 import (
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/fermyon/spin/sdk/go/key_value"
+	"github.com/rajatjindal/goodfirstissue/logrus"
 )
 
 type DataWithExpiry struct {
@@ -44,12 +44,12 @@ func CleanupCache() error {
 	}
 
 	keys, err := key_value.GetKeys(store)
-	fmt.Printf("total %d keys found\n", len(keys))
+	logrus.Infof("total %d keys found\n", len(keys))
 
 	for _, key := range keys {
 		err = key_value.Delete(store, key)
 		if err != nil {
-			fmt.Printf("ERROR deleting key %s\n", key)
+			logrus.Errorf("error deleting key %s\n", key)
 		}
 	}
 

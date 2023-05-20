@@ -8,8 +8,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/bluesky-social/indigo/xrpc"
 	spinhttp "github.com/fermyon/spin/sdk/go/http"
 	"github.com/google/go-github/v51/github"
+	"github.com/rajatjindal/goodfirstissue/bluesky"
 	"github.com/rajatjindal/goodfirstissue/cache"
 	"github.com/rajatjindal/goodfirstissue/logrus"
 	"github.com/rajatjindal/goodfirstissue/twitter"
@@ -25,6 +27,7 @@ const (
 
 type WebhookHandler struct {
 	Twitter          *twitter.Client
+	Bluesky          *xrpc.Client
 	TwitterHandleMap map[string]string
 }
 
@@ -37,9 +40,22 @@ func init() {
 			TokenSecret:   "",
 		}
 
+		const (
+			blueskyUsername = "goodfirstissue.bsky.social"
+			blueskyPassword = ""
+		)
+
 		spinhttpclient := spinhttp.NewClient()
 		client, err := twitter.NewClient(spinhttpclient, tokens)
 		if err != nil {
+			logrus.Errorf("failed to create twitter client %w", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		bluesky, err := bluesky.NewClient(spinhttpclient, blueskyUsername, blueskyPassword)
+		if err != nil {
+			logrus.Errorf("failed to create bluesky client %w", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -47,6 +63,7 @@ func init() {
 		twitterHandleMap := twitter.GetTwitterHandleMap()
 		handler := &WebhookHandler{
 			Twitter:          client,
+			Bluesky:          bluesky,
 			TwitterHandleMap: twitterHandleMap,
 		}
 
@@ -108,7 +125,14 @@ func (h *WebhookHandler) Handle(w http.ResponseWriter, r *http.Request) {
 
 	err = h.Twitter.Tweet(msg)
 	if err != nil {
-		logrus.Error(err)
+		logrus.Errorf("failed to create twitter post %w", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	_, err = bluesky.CreatePost(r.Context(), h.Bluesky, msg)
+	if err != nil {
+		logrus.Errorf("failed to create bluesky post %w", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
