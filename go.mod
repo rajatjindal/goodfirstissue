@@ -8,6 +8,7 @@ require (
 	github.com/dghubble/oauth1 v0.7.2
 	github.com/fermyon/spin/sdk/go v1.0.0-rc.1.0.20230413224726-a1944a33a7c3
 	github.com/google/go-github/v51 v51.0.0
+	github.com/otiai10/opengraph v1.1.3
 )
 
 require (

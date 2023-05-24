@@ -116,24 +116,37 @@ func (h *WebhookHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// format the tweet
-	msg := h.getMsg(event)
-	if msg == "" {
+	summary, link := h.getMsg(event)
+	if summary == "" {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("OK"))
 		return
 	}
 
-	err = h.Twitter.Tweet(msg)
-	if err != nil {
+	msg := fmt.Sprintf("\n\n%s\n%s", summary, link)
+	terr := h.Twitter.Tweet(msg)
+	if terr != nil {
 		logrus.Errorf("failed to create twitter post %w", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
 	}
 
-	_, err = bluesky.CreatePost(r.Context(), h.Bluesky, msg)
-	if err != nil {
+	_, berr := bluesky.CreatePost(r.Context(), h.Bluesky, summary, link)
+	if berr != nil {
 		logrus.Errorf("failed to create bluesky post %w", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	if terr != nil || berr != nil {
+		msg := ""
+		if terr != nil {
+			msg += terr.Error()
+			msg += "\n"
+		}
+
+		if berr != nil {
+			msg += terr.Error()
+			msg += "\n"
+		}
+
+		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 
@@ -229,7 +242,7 @@ func parseEventForSpin(r *http.Request) (*github.IssuesEvent, error) {
 	return event, nil
 }
 
-func (h *WebhookHandler) getMsg(event *github.IssuesEvent) string {
+func (h *WebhookHandler) getMsg(event *github.IssuesEvent) (string, string) {
 	msg := ""
 	switch event.GetAction() {
 	case "opened":
@@ -246,7 +259,7 @@ func (h *WebhookHandler) getMsg(event *github.IssuesEvent) string {
 		}
 	default:
 		logrus.Warnf("unsupported event action %s", event.GetAction())
-		return ""
+		return "", ""
 	}
 
 	//send to twitter
@@ -280,7 +293,5 @@ func (h *WebhookHandler) getMsg(event *github.IssuesEvent) string {
 		summary = summary[0:maxSummaryLength] + dotsAtTheEnd
 	}
 
-	msg += fmt.Sprintf("\n\n%s\n%s", summary, event.Issue.GetHTMLURL())
-
-	return msg
+	return summary, event.Issue.GetHTMLURL()
 }
