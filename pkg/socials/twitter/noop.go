@@ -24,6 +24,6 @@ func (c *NoopClient) CreatePost(post string) error {
 	return nil
 }
 
-func (c *NoopClient) Format(prefix string, issue *github.Issue) string {
-	return format(prefix, issue)
+func (c *NoopClient) Format(prefix string, event *github.IssuesEvent) string {
+	return format(prefix, event)
 }

@@ -151,13 +151,13 @@ func TestHandler(t *testing.T) {
 func testEvent() *github.IssuesEvent {
 	return &github.IssuesEvent{
 		Action: ptr("opened"),
+		Repo: &github.Repository{
+			Name:     ptr("goodfirstissue"),
+			FullName: ptr("rajatjindal/goodfirstissue"),
+			Language: ptr("golang"),
+		},
 		Issue: &github.Issue{
 			HTMLURL: ptr("https://github.com/rajatjindal/goodfirstissue/issues/36"),
-			Repository: &github.Repository{
-				Name:     ptr("goodfirstissue"),
-				FullName: ptr("rajatjindal/goodfirstissue"),
-				Language: ptr("golang"),
-			},
 			Labels: []*github.Label{
 				{
 					Name: ptr("good first issue"),

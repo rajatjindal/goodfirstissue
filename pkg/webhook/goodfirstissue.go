@@ -1,12 +1,12 @@
 package webhook
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/google/go-github/v51/github"
-	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -30,19 +30,20 @@ func getPrefix(event *github.IssuesEvent) string {
 			msg = "an issue just got available for assignment #goodfirstissue"
 		}
 	default:
-		logrus.Warnf("unsupported event action %s", event.GetAction())
+		fmt.Printf("unsupported event action %s\n", event.GetAction())
 		return ""
 	}
 
 	msg += fmt.Sprintf(" for %s", event.Repo.GetFullName())
-	if event.Issue.Repository.GetFullName() != "codinasion/program" && event.Issue.Repository.Language != nil {
-		msg += fmt.Sprintf(" #%s", event.Issue.Repository.GetLanguage())
+	if event.Repo.GetFullName() != "codinasion/program" && event.Repo.Language != nil {
+		msg += fmt.Sprintf(" #%s", event.Repo.GetLanguage())
 	}
 
 	return msg
 }
 
 func isGoodFirstIssue(msgType string, payload []byte) (*github.IssuesEvent, error) {
+	fmt.Println("entering isGoodFirstIssue function")
 	event, err := parseEvent(msgType, payload)
 	if err != nil {
 		return nil, err
@@ -60,7 +61,13 @@ func isGoodFirstIssue(msgType string, payload []byte) (*github.IssuesEvent, erro
 }
 
 func parseEvent(msgType string, payload []byte) (*github.IssuesEvent, error) {
-	raw, err := github.ParseWebHook(msgType, payload)
+	x := "IssuesEvent"
+	rawEvent := github.Event{
+		Type:       &x,
+		RawPayload: (*json.RawMessage)(&payload),
+	}
+
+	raw, err := rawEvent.ParsePayload()
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse payload. Error: %v", err)
 	}
@@ -74,6 +81,7 @@ func parseEvent(msgType string, payload []byte) (*github.IssuesEvent, error) {
 }
 
 func goodFirstIssue(labels []*github.Label) bool {
+	fmt.Println("entering goodFirstIssue function")
 	for _, l := range labels {
 		labelName := strings.ToLower(l.GetName())
 		if labelName == "good first issue" || labelName == "good-first-issue" {
