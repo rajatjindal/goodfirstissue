@@ -1,7 +1,9 @@
 package twitter
 
 import (
+	"context"
 	"errors"
+	"net/http"
 
 	//lint:ignore SA1019 ignore this for now!
 	"github.com/dghubble/go-twitter/twitter"
@@ -30,7 +32,7 @@ var (
 )
 
 // NewClient returns new twitter client
-func NewClient(credsProvider creds.Provider) (*RealClient, error) {
+func NewClient(client *http.Client, credsProvider creds.Provider) (*RealClient, error) {
 	credentials, err := credsProvider.GetCredentials("twitter")
 	if err != nil {
 		return nil, err
@@ -38,7 +40,7 @@ func NewClient(credsProvider creds.Provider) (*RealClient, error) {
 
 	config := oauth1.NewConfig(credentials["consumerKey"], credentials["consumerToken"])
 	token := oauth1.NewToken(credentials["token"], credentials["tokenSecret"])
-	httpClient := config.Client(oauth1.NoContext, token)
+	httpClient := config.Client(context.WithValue(oauth1.NoContext, oauth1.HTTPClient, client), token)
 
 	return &RealClient{
 		twitter: twitter.NewClient(httpClient),

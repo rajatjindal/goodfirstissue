@@ -1,4 +1,4 @@
-package cache
+package gocache
 
 import (
 	"time"
@@ -10,7 +10,7 @@ type GoCache struct {
 	store *gocache.Cache
 }
 
-func NewGoCache(expiration, cleanup time.Duration) *GoCache {
+func Provider(expiration, cleanup time.Duration) *GoCache {
 	return &GoCache{
 		gocache.New(expiration, cleanup),
 	}
@@ -21,5 +21,10 @@ func (g *GoCache) Get(k string) (interface{}, bool) {
 
 func (g *GoCache) Set(k string, v interface{}) error {
 	g.store.SetDefault(k, v)
+	return nil
+}
+
+func (g *GoCache) CleanupExpiredCache() error {
+	g.store.DeleteExpired()
 	return nil
 }

@@ -1,6 +1,7 @@
 package webhook
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -14,7 +15,7 @@ var (
 	ErrUnsupportedEvent = errors.New("event not supported")
 )
 
-func getPrefix(event *github.IssuesEvent) string {
+func getPrefix(event *github.IssuesEvent) (string, bool) {
 	msg := ""
 	switch event.GetAction() {
 	case "opened":
@@ -31,7 +32,7 @@ func getPrefix(event *github.IssuesEvent) string {
 		}
 	default:
 		logrus.Warnf("unsupported event action %s", event.GetAction())
-		return ""
+		return "", false
 	}
 
 	msg += fmt.Sprintf(" for %s", event.Repo.GetFullName())
@@ -39,7 +40,7 @@ func getPrefix(event *github.IssuesEvent) string {
 		msg += fmt.Sprintf(" #%s", event.Repo.GetLanguage())
 	}
 
-	return msg
+	return msg, true
 }
 
 func isGoodFirstIssue(msgType string, payload []byte) (*github.IssuesEvent, error) {
@@ -60,7 +61,13 @@ func isGoodFirstIssue(msgType string, payload []byte) (*github.IssuesEvent, erro
 }
 
 func parseEvent(msgType string, payload []byte) (*github.IssuesEvent, error) {
-	raw, err := github.ParseWebHook(msgType, payload)
+	x := "IssuesEvent"
+	rawEvent := github.Event{
+		Type:       &x,
+		RawPayload: (*json.RawMessage)(&payload),
+	}
+
+	raw, err := rawEvent.ParsePayload()
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse payload. Error: %v", err)
 	}

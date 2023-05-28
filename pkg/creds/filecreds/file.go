@@ -1,4 +1,4 @@
-package creds
+package filecreds
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ type file struct {
 	filename string
 }
 
-func FileProvider(filename string) *file {
+func Provider(filename string) *file {
 	return &file{
 		filename: filename,
 	}
