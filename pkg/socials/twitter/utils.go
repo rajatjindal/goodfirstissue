@@ -26,11 +26,11 @@ func format(prefix string, event *github.IssuesEvent) string {
 func getMention(event *github.IssuesEvent) string {
 	tHandle := ""
 	ok := false
-	if tHandle, ok = twitterMap[event.Issue.Repository.GetFullName()]; ok && tHandle != "" {
+	if tHandle, ok = twitterMap[event.Repo.GetFullName()]; ok && tHandle != "" {
 		return fmt.Sprintf(" @%s", tHandle)
 	}
 
-	if tHandle, ok = twitterMap[event.Issue.Repository.Owner.GetLogin()]; ok && tHandle != "" {
+	if tHandle, ok = twitterMap[event.Repo.Owner.GetLogin()]; ok && tHandle != "" {
 		return fmt.Sprintf(" @%s", tHandle)
 	}
 

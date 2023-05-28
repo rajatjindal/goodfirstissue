@@ -35,8 +35,8 @@ func getPrefix(event *github.IssuesEvent) string {
 	}
 
 	msg += fmt.Sprintf(" for %s", event.Repo.GetFullName())
-	if event.Issue.Repository.GetFullName() != "codinasion/program" && event.Issue.Repository.Language != nil {
-		msg += fmt.Sprintf(" #%s", event.Issue.Repository.GetLanguage())
+	if event.Repo.GetFullName() != "codinasion/program" && event.Repo.Language != nil {
+		msg += fmt.Sprintf(" #%s", event.Repo.GetLanguage())
 	}
 
 	return msg
