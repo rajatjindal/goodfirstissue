@@ -24,7 +24,7 @@ func (c *FakeClient) CreatePost(post string) error {
 	return args.Error(0)
 }
 
-func (c *FakeClient) Format(prefix string, issue *github.Issue) string {
-	args := c.Called(prefix, issue)
+func (c *FakeClient) Format(prefix string, event *github.IssuesEvent) string {
+	args := c.Called(prefix, event)
 	return args.String(0)
 }

@@ -45,8 +45,8 @@ func NewClient(credsProvider creds.Provider) (*RealClient, error) {
 	}, nil
 }
 
-func (c *RealClient) Format(prefix string, issue *github.Issue) string {
-	return format(prefix, issue)
+func (c *RealClient) Format(prefix string, event *github.IssuesEvent) string {
+	return format(prefix, event)
 }
 
 func (c *RealClient) CreatePost(post string) error {

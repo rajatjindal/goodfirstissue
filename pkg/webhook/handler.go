@@ -67,7 +67,7 @@ func (h *Handler) handle(r *http.Request) (int, []byte) {
 	}
 
 	prefix := getPrefix(event)
-	err = h.socialProvider.CreatePost(h.socialProvider.Format(prefix, event.Issue))
+	err = h.socialProvider.CreatePost(h.socialProvider.Format(prefix, event))
 	if err != nil {
 		logrus.Error(err.Error())
 		return http.StatusInternalServerError, []byte(err.Error())
