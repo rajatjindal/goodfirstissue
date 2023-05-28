@@ -42,6 +42,11 @@ func (h *Handler) handle(r *http.Request) (int, []byte) {
 		return http.StatusBadRequest, []byte("bad request")
 	}
 
+	if msgType != "issues" {
+		logrus.Errorf("unsupported github event %q", msgType)
+		return http.StatusBadRequest, []byte("bad request")
+	}
+
 	payload, err := io.ReadAll(r.Body)
 	if err != nil {
 		logrus.Errorf("failed to read request body. Error: %v", err)

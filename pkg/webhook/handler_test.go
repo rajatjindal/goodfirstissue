@@ -83,7 +83,7 @@ func TestHandler(t *testing.T) {
 			setupHandler: func(c *cache.FakeCache, s *socials.FakeClient) *Handler {
 				c.On("Get", "https://github.com/rajatjindal/goodfirstissue/issues/36").Return(false, false)
 				c.On("Set", "https://github.com/rajatjindal/goodfirstissue/issues/36", true).Return(nil)
-				s.On("Format", mock.AnythingOfType("string"), mock.AnythingOfType("*github.Issue")).Return("formatted msg")
+				s.On("Format", mock.AnythingOfType("string"), mock.AnythingOfType("*github.IssuesEvent")).Return("formatted msg")
 				s.On("CreatePost", "formatted msg").Return(nil)
 				return NewHandler(c, s)
 			},
@@ -115,7 +115,7 @@ func TestHandler(t *testing.T) {
 			name: "action opened, goodfirstissue, create post failed",
 			setupHandler: func(c *cache.FakeCache, s *socials.FakeClient) *Handler {
 				c.On("Get", "https://github.com/rajatjindal/goodfirstissue/issues/36").Return(false, false)
-				s.On("Format", mock.AnythingOfType("string"), mock.AnythingOfType("*github.Issue")).Return("formatted msg")
+				s.On("Format", mock.AnythingOfType("string"), mock.AnythingOfType("*github.IssuesEvent")).Return("formatted msg")
 				s.On("CreatePost", "formatted msg").Return(fmt.Errorf("failed to create post"))
 				return NewHandler(c, s)
 			},
@@ -151,13 +151,13 @@ func TestHandler(t *testing.T) {
 func testEvent() *github.IssuesEvent {
 	return &github.IssuesEvent{
 		Action: ptr("opened"),
+		Repo: &github.Repository{
+			Name:     ptr("goodfirstissue"),
+			FullName: ptr("rajatjindal/goodfirstissue"),
+			Language: ptr("golang"),
+		},
 		Issue: &github.Issue{
 			HTMLURL: ptr("https://github.com/rajatjindal/goodfirstissue/issues/36"),
-			Repository: &github.Repository{
-				Name:     ptr("goodfirstissue"),
-				FullName: ptr("rajatjindal/goodfirstissue"),
-				Language: ptr("golang"),
-			},
 			Labels: []*github.Label{
 				{
 					Name: ptr("good first issue"),

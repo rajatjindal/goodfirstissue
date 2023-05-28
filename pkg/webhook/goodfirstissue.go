@@ -1,6 +1,7 @@
 package webhook
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -60,7 +61,13 @@ func isGoodFirstIssue(msgType string, payload []byte) (*github.IssuesEvent, erro
 }
 
 func parseEvent(msgType string, payload []byte) (*github.IssuesEvent, error) {
-	raw, err := github.ParseWebHook(msgType, payload)
+	x := "IssuesEvent"
+	rawEvent := github.Event{
+		Type:       &x,
+		RawPayload: (*json.RawMessage)(&payload),
+	}
+
+	raw, err := rawEvent.ParsePayload()
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse payload. Error: %v", err)
 	}

@@ -2,3 +2,5 @@ build/
 template/
 vendor
 .DS_Store
+.spin
+main.wasm

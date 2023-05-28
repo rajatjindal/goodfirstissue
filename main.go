@@ -1,31 +1,47 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
-	"github.com/rajatjindal/goodfirstissue/pkg/cache"
-	"github.com/rajatjindal/goodfirstissue/pkg/creds"
+	spinhttp "github.com/fermyon/spin/sdk/go/http"
+	"github.com/rajatjindal/goodfirstissue/pkg/cache/kvcache"
+	"github.com/rajatjindal/goodfirstissue/pkg/creds/kvcreds"
 	"github.com/rajatjindal/goodfirstissue/pkg/socials/twitter"
 	"github.com/rajatjindal/goodfirstissue/pkg/webhook"
 
 	"github.com/sirupsen/logrus"
 )
 
-const (
-	credentialsFile = "/etc/secrets/goodfirstissue.yaml"
-)
+func init() {
+	spinhttp.Handle(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("entering spin Handle func")
+		credsProvider := kvcreds.Provider()
+		client := spinhttp.NewClient()
 
-func main() {
-	credsProvider := creds.FileProvider(credentialsFile)
-	twitter, err := twitter.NewClient(credsProvider)
-	if err != nil {
-		logrus.Fatal(err)
-	}
+		twitter, err := twitter.NewClient(client, credsProvider)
+		if err != nil {
+			logrus.Fatal(err)
+		}
 
-	cacheProvider := cache.NewGoCache(1*time.Minute, 2*time.Minute)
-	handler := webhook.NewHandler(cacheProvider, twitter)
+		cacheProvider := kvcache.Provider(1*time.Minute, 2*time.Minute)
+		handler := webhook.NewHandler(cacheProvider, twitter)
 
-	http.HandleFunc("/", handler.Handle)
-	logrus.Fatal(http.ListenAndServe(":8080", nil))
+		if r.URL.Path == "/cleanup-cache" {
+			err := cacheProvider.CleanupExpiredCache()
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("OK"))
+			return
+		}
+
+		handler.Handle(w, r)
+	})
 }
+
+func main() {}

@@ -1,4 +1,4 @@
-package cache
+package gocache
 
 import (
 	"time"
@@ -10,7 +10,7 @@ type GoCache struct {
 	store *gocache.Cache
 }
 
-func NewGoCache(expiration, cleanup time.Duration) *GoCache {
+func Provider(expiration, cleanup time.Duration) *GoCache {
 	return &GoCache{
 		gocache.New(expiration, cleanup),
 	}
