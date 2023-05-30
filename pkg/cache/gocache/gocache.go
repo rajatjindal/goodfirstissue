@@ -23,3 +23,8 @@ func (g *GoCache) Set(k string, v interface{}) error {
 	g.store.SetDefault(k, v)
 	return nil
 }
+
+func (g *GoCache) CleanupExpiredCache() error {
+	g.store.DeleteExpired()
+	return nil
+}
