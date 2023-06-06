@@ -8,6 +8,7 @@ import (
 	spinhttp "github.com/fermyon/spin/sdk/go/http"
 	"github.com/rajatjindal/goodfirstissue/pkg/cache/kvcache"
 	"github.com/rajatjindal/goodfirstissue/pkg/creds/kvcreds"
+	"github.com/rajatjindal/goodfirstissue/pkg/socials/bluesky"
 	"github.com/rajatjindal/goodfirstissue/pkg/socials/twitter"
 	"github.com/rajatjindal/goodfirstissue/pkg/webhook"
 
@@ -25,8 +26,13 @@ func init() {
 			logrus.Fatal(err)
 		}
 
+		bluesky, err := bluesky.NewClient(client, credsProvider)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+
 		cacheProvider := kvcache.Provider(1*time.Minute, 2*time.Minute)
-		handler := webhook.NewHandler(cacheProvider, twitter)
+		handler := webhook.NewHandler(cacheProvider, twitter, bluesky)
 
 		if r.URL.Path == "/cleanup-cache" {
 			err := cacheProvider.CleanupExpiredCache()
