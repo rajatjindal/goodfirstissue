@@ -42,6 +42,11 @@ func (h *Handler) handle(r *http.Request) (int, []byte) {
 		return http.StatusBadRequest, []byte("bad request")
 	}
 
+	if msgType != "issues" {
+		logrus.Errorf("unsupported github event %q", msgType)
+		return http.StatusBadRequest, []byte("bad request")
+	}
+
 	payload, err := io.ReadAll(r.Body)
 	if err != nil {
 		logrus.Errorf("failed to read request body. Error: %v", err)
@@ -66,7 +71,11 @@ func (h *Handler) handle(r *http.Request) (int, []byte) {
 		return http.StatusOK, []byte("OK")
 	}
 
-	prefix := getPrefix(event)
+	prefix, ok := getPrefix(event)
+	if !ok {
+		return http.StatusOK, []byte("OK")
+	}
+
 	err = h.socialProvider.CreatePost(h.socialProvider.Format(prefix, event))
 	if err != nil {
 		logrus.Error(err.Error())
