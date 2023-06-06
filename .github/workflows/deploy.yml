@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      tinygo-dev-image-tag: sha-744574193b9e213bc2d897d5e5f02ec1c256ff7a
     steps:
       - uses: actions/checkout@v3
 
@@ -21,11 +23,38 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: "1.20"
-          
-      - name: "Install TinyGo"
-        uses: rajatjindal/setup-actions/tinygo@v0.0.1
+
+      - name: Cache tinygo
+        id: cache-tinygo
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-tinygo
         with:
-          version: "v0.27.0"
+          path: ${{ github.workspace }}/tinygo
+          key: tinygo-dev-${{ env.tinygo-dev-image-tag }}
+
+      # download tinygo from dev docker container to use new 'reflect' and 'encoding/json' features
+      - name: Download tinygo
+        if: ${{ steps.cache-tinygo.outputs.cache-hit != 'true' }}
+        env:
+          IMAGE_TAG: ghcr.io/tinygo-org/tinygo-dev:${{ env.tinygo-dev-image-tag }}
+        run: |
+          # download tinygo from 'dev' branch docker container
+          docker pull ${IMAGE_TAG}
+          CONTAINER=$(docker create --platform=linux/amd64 ${IMAGE_TAG})
+          docker cp ${CONTAINER}:/tinygo/ $GITHUB_WORKSPACE
+          docker rm -v ${CONTAINER}
+
+      - name: Setup tinygo
+        run: |
+          # set the tinygo root path
+          echo "TINYGOROOT=$GITHUB_WORKSPACE/tinygo" >> $GITHUB_ENV
+          # add tinygo to gopath
+          GOPATH=$(go env GOPATH)
+          cp $GITHUB_WORKSPACE/tinygo/build/* $(go env GOPATH)/bin
+          # debug home paths
+          ls -al $GITHUB_WORKSPACE
+          env
 
       - name: build and deploy
         uses: fermyon/actions/spin/deploy@v1
