@@ -47,15 +47,18 @@ func NewClient(client *http.Client, credsProvider creds.Provider) (*RealClient, 
 	}, nil
 }
 
-func (c *RealClient) Format(prefix string, event *github.IssuesEvent) string {
-	return format(prefix, event)
-}
+func (c *RealClient) CreatePost(ctx context.Context, prefix string, event *github.IssuesEvent) error {
+	post := format(prefix, event)
 
-func (c *RealClient) CreatePost(post string) error {
 	_, _, err := c.twitter.Statuses.Update(post, nil)
 	if err != nil {
 		logrus.Error(err)
 		return err
 	}
+
 	return nil
+}
+
+func (c *RealClient) Name() string {
+	return "twitter"
 }

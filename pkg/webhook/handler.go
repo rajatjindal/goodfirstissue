@@ -2,6 +2,7 @@ package webhook
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -12,14 +13,14 @@ import (
 )
 
 type Handler struct {
-	socialProvider socials.Provider
-	cacheProvider  cache.Provider
+	socialProviders []socials.Provider
+	cacheProvider   cache.Provider
 }
 
-func NewHandler(cacheProvider cache.Provider, socialProvider socials.Provider) *Handler {
+func NewHandler(cacheProvider cache.Provider, socialProviders ...socials.Provider) *Handler {
 	return &Handler{
-		socialProvider: socialProvider,
-		cacheProvider:  cacheProvider,
+		socialProviders: socialProviders,
+		cacheProvider:   cacheProvider,
 	}
 }
 
@@ -76,10 +77,22 @@ func (h *Handler) handle(r *http.Request) (int, []byte) {
 		return http.StatusOK, []byte("OK")
 	}
 
-	err = h.socialProvider.CreatePost(h.socialProvider.Format(prefix, event))
-	if err != nil {
-		logrus.Error(err.Error())
-		return http.StatusInternalServerError, []byte(err.Error())
+	var errs []error
+	for _, provider := range h.socialProviders {
+		err = provider.CreatePost(r.Context(), prefix, event)
+		if err != nil {
+			logrus.Error(err.Error())
+			errs = append(errs, fmt.Errorf("%s: %v", provider.Name(), err))
+		}
+	}
+
+	if len(errs) > 0 {
+		msg := ""
+		for _, e := range errs {
+			msg += e.Error() + "\n"
+		}
+
+		return http.StatusInternalServerError, []byte(msg)
 	}
 
 	err = h.cacheProvider.Set(event.Issue.GetHTMLURL(), true)

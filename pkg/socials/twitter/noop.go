@@ -1,6 +1,7 @@
 package twitter
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/google/go-github/v51/github"
@@ -19,11 +20,11 @@ var (
 	_ socials.Provider = &NoopClient{}
 )
 
-func (c *NoopClient) CreatePost(post string) error {
-	fmt.Println(post)
+func (c *NoopClient) CreatePost(ctx context.Context, prefix string, event *github.IssuesEvent) error {
+	fmt.Println(ctx, prefix, event)
 	return nil
 }
 
-func (c *NoopClient) Format(prefix string, event *github.IssuesEvent) string {
-	return format(prefix, event)
+func (c *NoopClient) Name() string {
+	return "noop"
 }

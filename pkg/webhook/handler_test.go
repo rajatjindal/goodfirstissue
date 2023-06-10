@@ -83,8 +83,7 @@ func TestHandler(t *testing.T) {
 			setupHandler: func(c *cache.FakeCache, s *socials.FakeClient) *Handler {
 				c.On("Get", "https://github.com/rajatjindal/goodfirstissue/issues/36").Return(false, false)
 				c.On("Set", "https://github.com/rajatjindal/goodfirstissue/issues/36", true).Return(nil)
-				s.On("Format", mock.AnythingOfType("string"), mock.AnythingOfType("*github.IssuesEvent")).Return("formatted msg")
-				s.On("CreatePost", "formatted msg").Return(nil)
+				s.On("CreatePost", mock.Anything, mock.AnythingOfType("string"), mock.AnythingOfType("*github.IssuesEvent")).Return(nil)
 				return NewHandler(c, s)
 			},
 			setupRequest: func() *http.Request {
@@ -115,8 +114,7 @@ func TestHandler(t *testing.T) {
 			name: "action opened, goodfirstissue, create post failed",
 			setupHandler: func(c *cache.FakeCache, s *socials.FakeClient) *Handler {
 				c.On("Get", "https://github.com/rajatjindal/goodfirstissue/issues/36").Return(false, false)
-				s.On("Format", mock.AnythingOfType("string"), mock.AnythingOfType("*github.IssuesEvent")).Return("formatted msg")
-				s.On("CreatePost", "formatted msg").Return(fmt.Errorf("failed to create post"))
+				s.On("CreatePost", mock.Anything, mock.AnythingOfType("string"), mock.AnythingOfType("*github.IssuesEvent")).Return(fmt.Errorf("failed to create post"))
 				return NewHandler(c, s)
 			},
 			setupRequest: func() *http.Request {
@@ -126,7 +124,7 @@ func TestHandler(t *testing.T) {
 				return req
 			},
 			expectedCode: http.StatusInternalServerError,
-			expectedBody: []byte("failed to create post"),
+			expectedBody: []byte("fake: failed to create post\n"),
 		},
 	}
 
@@ -140,7 +138,7 @@ func TestHandler(t *testing.T) {
 
 			code, body := handler.handle(req)
 			assert.Equal(t, tc.expectedCode, code)
-			assert.Equal(t, tc.expectedBody, body)
+			assert.Equal(t, string(tc.expectedBody), string(body))
 
 			fakeCache.AssertExpectations(t)
 			fakeProvider.AssertExpectations(t)

@@ -67,3 +67,5 @@ jobs:
             twitter:consumerToken=${{ secrets.TWITTER_CONSUMER_TOKEN }}
             twitter:token=${{ secrets.TWITTER_TOKEN }}
             twitter:tokenSecret=${{ secrets.TWITTER_TOKEN_SECRET }}
+            bluesky:handle=${{ secrets.BLUESKY_HANDLE }}
+            bluesky:password=${{ secrets.BLUESKY_PASSWORD }}

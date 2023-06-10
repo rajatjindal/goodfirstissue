@@ -8,7 +8,7 @@ ARG SPIN_VERSION=canary
 ## spin
 RUN wget https://github.com/fermyon/spin/releases/download/${SPIN_VERSION}/spin-${SPIN_VERSION}-linux-amd64.tar.gz &&         \
     tar -xvf spin-${SPIN_VERSION}-linux-amd64.tar.gz &&                                                                       \
-    ls -ltr &&                                                                                                                  \
+    ls -ltr &&                                                                                                                \
     mv spin /usr/local/bin/spin;
 
 RUN spin --version

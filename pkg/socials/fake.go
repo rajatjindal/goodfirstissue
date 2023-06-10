@@ -1,6 +1,8 @@
 package socials
 
 import (
+	"context"
+
 	"github.com/google/go-github/v51/github"
 	"github.com/rajatjindal/goodfirstissue/pkg/creds"
 	"github.com/stretchr/testify/mock"
@@ -19,12 +21,11 @@ var (
 	_ Provider = &FakeClient{}
 )
 
-func (c *FakeClient) CreatePost(post string) error {
-	args := c.Called(post)
-	return args.Error(0)
+func (c *FakeClient) Name() string {
+	return "fake"
 }
 
-func (c *FakeClient) Format(prefix string, event *github.IssuesEvent) string {
-	args := c.Called(prefix, event)
-	return args.String(0)
+func (c *FakeClient) CreatePost(ctx context.Context, prefix string, event *github.IssuesEvent) error {
+	args := c.Called(ctx, prefix, event)
+	return args.Error(0)
 }

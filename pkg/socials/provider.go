@@ -1,8 +1,12 @@
 package socials
 
-import "github.com/google/go-github/v51/github"
+import (
+	"context"
+
+	"github.com/google/go-github/v51/github"
+)
 
 type Provider interface {
-	Format(prefix string, event *github.IssuesEvent) string
-	CreatePost(post string) error
+	Name() string
+	CreatePost(ctx context.Context, prefix string, event *github.IssuesEvent) error
 }
