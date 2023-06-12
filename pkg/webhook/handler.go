@@ -1,10 +1,12 @@
 package webhook
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/google/go-github/v51/github"
 	"github.com/rajatjindal/goodfirstissue/pkg/cache"
@@ -32,6 +34,14 @@ func (h *Handler) Handle(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) handle(r *http.Request) (int, []byte) {
+	stats := map[string]time.Duration{}
+	startTime := time.Now()
+	defer func() {
+		stats["handler"] = time.Since(startTime)
+		d, _ := json.Marshal(stats)
+		fmt.Println(string(d))
+	}()
+
 	if r.Body == nil {
 		logrus.Error("request body is missing")
 		return http.StatusBadRequest, []byte("bad request")
@@ -79,11 +89,13 @@ func (h *Handler) handle(r *http.Request) (int, []byte) {
 
 	var errs []error
 	for _, provider := range h.socialProviders {
+		stime := time.Now()
 		err = provider.CreatePost(r.Context(), prefix, event)
 		if err != nil {
 			logrus.Error(err.Error())
 			errs = append(errs, fmt.Errorf("%s: %v", provider.Name(), err))
 		}
+		stats[fmt.Sprintf("post:%s", provider.Name())] = time.Since(stime)
 	}
 
 	if len(errs) > 0 {

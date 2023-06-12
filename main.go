@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -17,19 +18,31 @@ import (
 
 func init() {
 	spinhttp.Handle(func(w http.ResponseWriter, r *http.Request) {
+		stime := time.Now()
+		stats := map[string]time.Duration{}
+		defer func() {
+			stats["total"] = time.Since(stime)
+			d, _ := json.Marshal(stats)
+			fmt.Println(string(d))
+		}()
+
 		fmt.Println("entering spin Handle func")
 		credsProvider := kvcreds.Provider()
 		client := spinhttp.NewClient()
 
+		twitterTime := time.Now()
 		twitter, err := twitter.NewClient(client, credsProvider)
 		if err != nil {
 			logrus.Fatal(err)
 		}
+		stats["creds:twitter"] = time.Since(twitterTime)
 
+		bskyTime := time.Now()
 		bluesky, err := bluesky.NewClient(client, credsProvider)
 		if err != nil {
 			logrus.Fatal(err)
 		}
+		stats["creds:bluesky"] = time.Since(bskyTime)
 
 		cacheProvider := kvcache.Provider(1*time.Minute, 2*time.Minute)
 		handler := webhook.NewHandler(cacheProvider, twitter, bluesky)
