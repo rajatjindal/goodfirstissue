@@ -34,10 +34,11 @@ func (h *Handler) Handle(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) handle(r *http.Request) (int, []byte) {
-	stats := map[string]time.Duration{}
+	stats := map[string]interface{}{}
 	startTime := time.Now()
 	defer func() {
 		stats["handler"] = time.Since(startTime)
+		stats["guid"] = r.Header.Get("X-GitHub-Delivery")
 		d, _ := json.Marshal(stats)
 		fmt.Println(string(d))
 	}()

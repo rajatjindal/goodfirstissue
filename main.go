@@ -19,9 +19,10 @@ import (
 func init() {
 	spinhttp.Handle(func(w http.ResponseWriter, r *http.Request) {
 		stime := time.Now()
-		stats := map[string]time.Duration{}
+		stats := map[string]interface{}{}
 		defer func() {
 			stats["total"] = time.Since(stime)
+			stats["guid"] = r.Header.Get("X-GitHub-Delivery")
 			d, _ := json.Marshal(stats)
 			fmt.Println(string(d))
 		}()
