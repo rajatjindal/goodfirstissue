@@ -9,7 +9,7 @@ version = "0.1.0"
 id = "goodfirstissue"
 source = "main.wasm"
 allowed_http_hosts = ["api.twitter.com", "bsky.social", "opengraph.githubassets.com", "github.com"]
-key_value_stores = ["default"]
+key_value_stores = ["thrilling-chimpanzee"]
 [component.trigger]
 route = "/..."
 [component.build]
