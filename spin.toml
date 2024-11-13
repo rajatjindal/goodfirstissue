@@ -6,10 +6,10 @@ trigger = { type = "http", base = "/" }
 version = "0.1.0"
 
 [[component]]
-id = "goodfirstissue"
+id = "backend"
 source = "main.wasm"
 allowed_http_hosts = ["api.twitter.com", "bsky.social", "opengraph.githubassets.com", "github.com"]
-key_value_stores = ["thrilling-chimpanzee"]
+key_value_stores = ["default"]
 [component.trigger]
 route = "/..."
 [component.build]
